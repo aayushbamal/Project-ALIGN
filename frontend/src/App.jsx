@@ -9,7 +9,7 @@ import IngestionModal from './components/IngestionModal';
 import BhuAadhaarModal from './components/BhuAadhaarModal';
 import EncroachmentNoticeModal from './components/EncroachmentNoticeModal';
 import ExportDropdown from './components/ExportDropdown';
-import { defaultSectorData } from './data/puneWard14Data';
+import { defaultSectorData, generateSectorData } from './data/puneWard14Data';
 import { realWorldParcelsGeoJSON } from './data/puneGeoJsonFixtures';
 import confetti from 'canvas-confetti';
 
@@ -158,6 +158,17 @@ export default function App() {
     }
   };
 
+  // Handler: Change Cadastral Sector
+  const handleSelectSector = (sectorId) => {
+    setSelectedSector(sectorId);
+    setSelectedParcel(null);
+    setActiveEncroachmentFocus(null);
+    const newSectorData = generateSectorData(sectorId);
+    setData(newSectorData);
+    setToastMessage(`Loaded ${newSectorData.sectorInfo.name} (${newSectorData.parcels.length.toLocaleString()} parcels)`);
+    setTimeout(() => setToastMessage(''), 3000);
+  };
+
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-background text-slate-100 font-sans select-none">
       {/* 1. Header Bar */}
@@ -167,7 +178,7 @@ export default function App() {
         isHarmonizing={isHarmonizing}
         onExport={() => setIsExportOpen(true)}
         selectedSector={selectedSector}
-        onSelectSector={setSelectedSector}
+        onSelectSector={handleSelectSector}
       />
 
       {/* 2. Top KPI Metric Ribbon */}
@@ -204,6 +215,8 @@ export default function App() {
           layerOpacity={layerOpacity}
           viewMode={viewMode}
           onChangeViewMode={setViewMode}
+          sectorInfo={data.sectorInfo}
+          infrastructure={data.infrastructure}
         />
 
         {/* Slide-out Parcel Inspector Sheet (Right) */}

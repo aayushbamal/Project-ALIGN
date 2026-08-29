@@ -1,18 +1,19 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { Map } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { 
   Plus, Minus, RotateCcw, Box, Map as MapIcon, 
-  Satellite, Layers, Sliders, Eye, EyeOff, ShieldCheck, 
-  AlertTriangle, Compass, CheckCircle2, Sun, Moon
+  Satellite, Sliders, AlertTriangle, Compass, 
+  CheckCircle2, Moon
 } from 'lucide-react';
-import { 
-  PUNE_CENTER, 
-  DEFAULT_ZOOM, 
-  getHarmonizedGeoJSON, 
-  getLegacyGeoJSON, 
-  municipalInfrastructureGeoJSON 
-} from '../data/puneGeoJsonFixtures';
+import { drainageLine, roadLine } from '../data/puneWard14Data';
+
+// Center and default zoom for Pune
+const PUNE_CENTER = [73.8567, 18.5204];
+const DEFAULT_ZOOM = 17.2;
+
+// CARTO API Key
+const CARTO_API_KEY = import.meta.env.VITE_CARTO_API_KEY || 'cb1_27y0_1_9b33dcb1032562b41e545bda';
 
 // Basemap Tile Sources
 const BASEMAPS = {
@@ -20,31 +21,110 @@ const BASEMAPS = {
     name: 'Esri Satellite',
     tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
     maxzoom: 19,
-    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    attribution: 'Tiles &copy; Esri'
   },
   streets: {
     name: 'Carto Positron (Light)',
-    tiles: ['https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'],
+    tiles: [`https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=${CARTO_API_KEY}`],
     maxzoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    attribution: '&copy; CARTO'
+  },
+  voyager: {
+    name: 'Carto Voyager',
+    tiles: [`https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=${CARTO_API_KEY}`],
+    maxzoom: 19,
+    attribution: '&copy; CARTO'
   },
   dark: {
     name: 'Carto Dark Matter',
-    tiles: ['https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'],
+    tiles: [`https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=${CARTO_API_KEY}`],
     maxzoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    attribution: '&copy; CARTO'
   }
 };
 
+// Convert parcels list to Harmonized GeoJSON
+function parcelsToHarmonizedGeoJSON(parcels) {
+  if (!parcels || !parcels.length) return { type: 'FeatureCollection', features: [] };
+  return {
+    type: 'FeatureCollection',
+    features: parcels.map((p, idx) => {
+      const rawCoords = p.coordinates_ai || (p.geometry && p.geometry.coordinates ? p.geometry.coordinates[0] : null);
+      if (!rawCoords || !rawCoords.length) return null;
+      return {
+        type: 'Feature',
+        id: idx + 1,
+        properties: {
+          parcel_id: p.parcel_id || `MH-${idx}`,
+          ulpin: p.ulpin || '',
+          khasra_no: p.khasra_no || `${idx}`,
+          owner_en: p.owner_en || '',
+          owner_vernacular: p.owner_vernacular || '',
+          legal_area_sqm: p.legal_area_sqm || 0,
+          surveyed_area_sqm: p.surveyed_area_sqm || 0,
+          delta_area_pct: p.delta_area_pct || 0,
+          confidence_score: p.confidence_score || 95,
+          status: p.status || 'Approved',
+          status_chip: p.status_chip || p.status || 'APPROVED',
+          ndsm_height_m: p.ndsm_height_m || 6.5,
+          is_encroaching: !!p.is_encroaching,
+          encroachment_type: p.encroachment_type || '',
+          encroached_area_sqm: p.encroached_area_sqm || 0,
+          centroid: p.centroid || rawCoords[0]
+        },
+        geometry: {
+          type: 'Polygon',
+          coordinates: [rawCoords]
+        }
+      };
+    }).filter(Boolean)
+  };
+}
+
+// Convert parcels list to Distorted Legacy GeoJSON (Cloth Shajra Map)
+function parcelsToLegacyGeoJSON(parcels) {
+  if (!parcels || !parcels.length) return { type: 'FeatureCollection', features: [] };
+  return {
+    type: 'FeatureCollection',
+    features: parcels.map((p, idx) => {
+      const rawCoords = p.coordinates_legacy || p.coordinates_ai || (p.geometry && p.geometry.coordinates ? p.geometry.coordinates[0] : null);
+      if (!rawCoords || !rawCoords.length) return null;
+      return {
+        type: 'Feature',
+        id: idx + 1,
+        properties: {
+          parcel_id: p.parcel_id || `MH-${idx}`,
+          ulpin: p.ulpin || '',
+          khasra_no: p.khasra_no || `${idx}`,
+          owner_en: p.owner_en || '',
+          owner_vernacular: p.owner_vernacular || '',
+          legal_area_sqm: p.legal_area_sqm || 0,
+          surveyed_area_sqm: p.surveyed_area_sqm || 0,
+          status: p.status || 'Approved',
+          status_chip: 'LEGACY DISTORTED',
+          confidence_score: 55.0,
+          isLegacy: true,
+          centroid: p.centroid || rawCoords[0]
+        },
+        geometry: {
+          type: 'Polygon',
+          coordinates: [rawCoords]
+        }
+      };
+    }).filter(Boolean)
+  };
+}
+
 export default function MapLibreView({
-  parcelsList,
+  parcelsList = [],
   selectedParcel,
   onSelectParcel,
-  layerVisibility,
-  layerOpacity,
-  viewMode,
+  layerVisibility = { legacy: true, aiWalls: true, drainage: true, roadRow: true },
+  layerOpacity = { legacy: 0.85, aiWalls: 0.95 },
+  viewMode = '2d',
   onChangeViewMode,
-  theme = 'dark'
+  sectorInfo,
+  infrastructure
 }) {
   const containerRef = useRef(null);
   const leftMapContainerRef = useRef(null);
@@ -57,21 +137,53 @@ export default function MapLibreView({
   const [swipePos, setSwipePos] = useState(50);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
 
-  // Selected Basemap: 'satellite' | 'streets' | 'dark'
+  // Selected Basemap: 'satellite' | 'streets' | 'voyager' | 'dark'
   const [activeBasemap, setActiveBasemap] = useState('satellite');
 
   // Hovered parcel state for popup
   const [hoveredInfo, setHoveredInfo] = useState(null);
 
-  // GeoJSON data
-  const harmonizedData = getHarmonizedGeoJSON();
-  const legacyData = getLegacyGeoJSON();
+  // GeoJSON data derived from parcelsList
+  const harmonizedGeoJSON = useMemo(() => parcelsToHarmonizedGeoJSON(parcelsList), [parcelsList]);
+  const legacyGeoJSON = useMemo(() => parcelsToLegacyGeoJSON(parcelsList), [parcelsList]);
 
-  // Create MapLibre style object for selected basemap
-  const createMapStyle = useCallback((basemapKey) => {
+  // Infrastructure GeoJSON
+  const drainageGeoJSON = useMemo(() => {
+    const coords = infrastructure?.drainage || drainageLine;
+    return {
+      type: 'FeatureCollection',
+      features: [{
+        type: 'Feature',
+        properties: { name: 'Stormwater Canal', type: 'Drainage' },
+        geometry: { type: 'LineString', coordinates: coords }
+      }]
+    };
+  }, [infrastructure]);
+
+  const roadGeoJSON = useMemo(() => {
+    const coords = infrastructure?.road || roadLine;
+    return {
+      type: 'FeatureCollection',
+      features: [{
+        type: 'Feature',
+        properties: { name: 'Municipal Road Right-of-Way Corridor (14m)', type: 'Road' },
+        geometry: { type: 'LineString', coordinates: coords }
+      }]
+    };
+  }, [infrastructure]);
+
+  // Compute live KPIs
+  const totalCount = parcelsList?.length || 1420;
+  const approvedCount = parcelsList?.filter(p => p.status === 'Approved').length || 1318;
+  const harmonizedRate = ((approvedCount / Math.max(1, totalCount)) * 100).toFixed(1);
+  const conflictCount = parcelsList?.filter(p => p.is_encroaching || p.status === 'Encroachment').length || 28;
+
+  // Declarative Style Object for Left Map (Legacy Distorted Cadastre)
+  const createLeftMapStyle = useCallback((basemapKey) => {
     const basemap = BASEMAPS[basemapKey] || BASEMAPS.satellite;
     return {
       version: 8,
+      glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
       sources: {
         'raster-tiles': {
           type: 'raster',
@@ -79,6 +191,18 @@ export default function MapLibreView({
           tileSize: 256,
           maxzoom: basemap.maxzoom,
           attribution: basemap.attribution
+        },
+        'legacy-parcels': {
+          type: 'geojson',
+          data: legacyGeoJSON
+        },
+        'infra-drain-source-left': {
+          type: 'geojson',
+          data: drainageGeoJSON
+        },
+        'infra-road-source-left': {
+          type: 'geojson',
+          data: roadGeoJSON
         }
       },
       layers: [
@@ -88,21 +212,222 @@ export default function MapLibreView({
           source: 'raster-tiles',
           minzoom: 0,
           maxzoom: 22
+        },
+        {
+          id: 'legacy-fill',
+          type: 'fill',
+          source: 'legacy-parcels',
+          layout: {
+            visibility: layerVisibility?.legacy !== false ? 'visible' : 'none'
+          },
+          paint: {
+            'fill-color': '#2563eb',
+            'fill-opacity': 0.35 * (layerOpacity?.legacy ?? 0.85)
+          }
+        },
+        {
+          id: 'legacy-line',
+          type: 'line',
+          source: 'legacy-parcels',
+          layout: {
+            visibility: layerVisibility?.legacy !== false ? 'visible' : 'none'
+          },
+          paint: {
+            'line-color': '#38bdf8',
+            'line-width': 2.2,
+            'line-dasharray': [3, 2]
+          }
+        },
+        {
+          id: 'infra-drainage-left',
+          type: 'line',
+          source: 'infra-drain-source-left',
+          layout: {
+            visibility: layerVisibility?.drainage !== false ? 'visible' : 'none'
+          },
+          paint: {
+            'line-color': '#06b6d4',
+            'line-width': 4.0,
+            'line-dasharray': [4, 2]
+          }
+        },
+        {
+          id: 'infra-road-left',
+          type: 'line',
+          source: 'infra-road-source-left',
+          layout: {
+            visibility: layerVisibility?.roadRow !== false ? 'visible' : 'none'
+          },
+          paint: {
+            'line-color': '#f59e0b',
+            'line-width': 6.5,
+            'line-opacity': 0.45
+          }
         }
       ]
     };
-  }, []);
+  }, [legacyGeoJSON, drainageGeoJSON, roadGeoJSON, layerVisibility, layerOpacity]);
+
+  // Declarative Style Object for Right Map (AI Harmonized SAM-2 Ground Truth)
+  const createRightMapStyle = useCallback((basemapKey) => {
+    const basemap = BASEMAPS[basemapKey] || BASEMAPS.satellite;
+    return {
+      version: 8,
+      glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+      sources: {
+        'raster-tiles': {
+          type: 'raster',
+          tiles: basemap.tiles,
+          tileSize: 256,
+          maxzoom: basemap.maxzoom,
+          attribution: basemap.attribution
+        },
+        'harmonized-parcels': {
+          type: 'geojson',
+          data: harmonizedGeoJSON
+        },
+        'infra-drain-source-right': {
+          type: 'geojson',
+          data: drainageGeoJSON
+        },
+        'infra-road-source-right': {
+          type: 'geojson',
+          data: roadGeoJSON
+        }
+      },
+      layers: [
+        {
+          id: 'raster-layer',
+          type: 'raster',
+          source: 'raster-tiles',
+          minzoom: 0,
+          maxzoom: 22
+        },
+        {
+          id: 'harmonized-fill',
+          type: 'fill',
+          source: 'harmonized-parcels',
+          layout: {
+            visibility: layerVisibility?.aiWalls !== false ? 'visible' : 'none'
+          },
+          paint: {
+            'fill-color': [
+              'match',
+              ['get', 'status'],
+              'Encroachment', '#f43f5e',
+              'Review', '#f59e0b',
+              'Approved', '#10b981',
+              '#10b981'
+            ],
+            'fill-opacity': [
+              'match',
+              ['get', 'status'],
+              'Encroachment', 0.58 * (layerOpacity?.aiWalls ?? 0.95),
+              'Review', 0.42 * (layerOpacity?.aiWalls ?? 0.95),
+              0.34 * (layerOpacity?.aiWalls ?? 0.95)
+            ]
+          }
+        },
+        {
+          id: 'harmonized-line',
+          type: 'line',
+          source: 'harmonized-parcels',
+          layout: {
+            visibility: layerVisibility?.aiWalls !== false ? 'visible' : 'none'
+          },
+          paint: {
+            'line-color': [
+              'match',
+              ['get', 'status'],
+              'Encroachment', '#f43f5e',
+              'Review', '#f59e0b',
+              'Approved', '#10b981',
+              '#10b981'
+            ],
+            'line-width': [
+              'match',
+              ['get', 'status'],
+              'Encroachment', 3.2,
+              'Review', 2.4,
+              2.0
+            ]
+          }
+        },
+        {
+          id: 'harmonized-3d-extrusion',
+          type: 'fill-extrusion',
+          source: 'harmonized-parcels',
+          layout: {
+            visibility: viewMode === '3d' && layerVisibility?.aiWalls !== false ? 'visible' : 'none'
+          },
+          paint: {
+            'fill-extrusion-color': [
+              'match',
+              ['get', 'status'],
+              'Encroachment', '#e11d48',
+              'Review', '#d97706',
+              'Approved', '#059669',
+              '#059669'
+            ],
+            'fill-extrusion-height': ['get', 'ndsm_height_m'],
+            'fill-extrusion-base': 0,
+            'fill-extrusion-opacity': 0.85
+          }
+        },
+        {
+          id: 'harmonized-selected',
+          type: 'line',
+          source: 'harmonized-parcels',
+          paint: {
+            'line-color': '#06b6d4',
+            'line-width': 4.5,
+            'line-opacity': 0.95
+          },
+          filter: ['==', ['get', 'parcel_id'], selectedParcel?.parcel_id || '']
+        },
+        {
+          id: 'infra-drainage-right',
+          type: 'line',
+          source: 'infra-drain-source-right',
+          layout: {
+            visibility: layerVisibility?.drainage !== false ? 'visible' : 'none'
+          },
+          paint: {
+            'line-color': '#06b6d4',
+            'line-width': 4.5,
+            'line-dasharray': [4, 2]
+          }
+        },
+        {
+          id: 'infra-road-right',
+          type: 'line',
+          source: 'infra-road-source-right',
+          layout: {
+            visibility: layerVisibility?.roadRow !== false ? 'visible' : 'none'
+          },
+          paint: {
+            'line-color': '#f59e0b',
+            'line-width': 7.5,
+            'line-opacity': 0.55
+          }
+        }
+      ]
+    };
+  }, [harmonizedGeoJSON, drainageGeoJSON, roadGeoJSON, layerVisibility, layerOpacity, viewMode, selectedParcel]);
 
   // Initialize Dual Synchronized MapLibre Instances
   useEffect(() => {
     if (!leftMapContainerRef.current || !rightMapContainerRef.current) return;
 
+    const centerCoord = sectorInfo?.center || PUNE_CENTER;
+    const zoomLevel = sectorInfo?.zoom || DEFAULT_ZOOM;
+
     // 1. Initialize Left Map (Legacy Distorted Layer)
     const leftMap = new Map({
       container: leftMapContainerRef.current,
-      style: createMapStyle(activeBasemap),
-      center: PUNE_CENTER,
-      zoom: DEFAULT_ZOOM,
+      style: createLeftMapStyle(activeBasemap),
+      center: centerCoord,
+      zoom: zoomLevel,
       pitch: viewMode === '3d' ? 50 : 0,
       bearing: viewMode === '3d' ? -15 : 0,
       attributionControl: false
@@ -111,9 +436,9 @@ export default function MapLibreView({
     // 2. Initialize Right Map (AI Harmonized Layer)
     const rightMap = new Map({
       container: rightMapContainerRef.current,
-      style: createMapStyle(activeBasemap),
-      center: PUNE_CENTER,
-      zoom: DEFAULT_ZOOM,
+      style: createRightMapStyle(activeBasemap),
+      center: centerCoord,
+      zoom: zoomLevel,
       pitch: viewMode === '3d' ? 50 : 0,
       bearing: viewMode === '3d' ? -15 : 0,
       attributionControl: false
@@ -139,217 +464,134 @@ export default function MapLibreView({
     leftMap.on('move', () => syncMaps(leftMap, rightMap));
     rightMap.on('move', () => syncMaps(rightMap, leftMap));
 
-    // Setup Layers on Load for Left Map (Legacy Shajra)
-    leftMap.on('load', () => {
-      // Add Legacy GeoJSON Source
-      leftMap.addSource('legacy-parcels', {
-        type: 'geojson',
-        data: legacyData
-      });
-
-      // Legacy Fill (Distorted Blue)
-      leftMap.addLayer({
-        id: 'legacy-fill',
-        type: 'fill',
-        source: 'legacy-parcels',
-        paint: {
-          'fill-color': '#3b82f6',
-          'fill-opacity': 0.22
-        }
-      });
-
-      // Legacy Outline (Dashed Blue Line)
-      leftMap.addLayer({
-        id: 'legacy-line',
-        type: 'line',
-        source: 'legacy-parcels',
-        paint: {
-          'line-color': '#38bdf8',
-          'line-width': 2.0,
-          'line-dasharray': [3, 2]
-        }
-      });
-
-      // Add Municipal Infrastructure
-      leftMap.addSource('infrastructure', {
-        type: 'geojson',
-        data: municipalInfrastructureGeoJSON
-      });
-
-      leftMap.addLayer({
-        id: 'infra-drainage',
-        type: 'line',
-        source: 'infrastructure',
-        paint: {
-          'line-color': '#06b6d4',
-          'line-width': 4.0,
-          'line-dasharray': [4, 2]
-        }
-      });
+    // Parcel Click Handler on Right Map
+    rightMap.on('click', 'harmonized-fill', (e) => {
+      if (e.features && e.features.length > 0) {
+        const props = e.features[0].properties;
+        if (onSelectParcel) onSelectParcel(props);
+      }
     });
 
-    // Setup Layers on Load for Right Map (AI Harmonized SAM-2)
-    rightMap.on('load', () => {
-      // Add Harmonized GeoJSON Source
-      rightMap.addSource('harmonized-parcels', {
-        type: 'geojson',
-        data: harmonizedData
-      });
+    // Cursor & Hover Tooltip
+    rightMap.on('mousemove', 'harmonized-fill', (e) => {
+      rightMap.getCanvas().style.cursor = 'pointer';
+      if (e.features && e.features.length > 0) {
+        setHoveredInfo({
+          props: e.features[0].properties,
+          x: e.point.x,
+          y: e.point.y
+        });
+      }
+    });
 
-      // 1. 2D / 3D Extrusion or Fill
-      rightMap.addLayer({
-        id: 'harmonized-fill',
-        type: 'fill',
-        source: 'harmonized-parcels',
-        paint: {
-          'fill-color': [
-            'match',
-            ['get', 'status'],
-            'Encroachment', '#f43f5e',
-            'Review', '#f59e0b',
-            'Approved', '#10b981',
-            '#10b981'
-          ],
-          'fill-opacity': [
-            'match',
-            ['get', 'status'],
-            'Encroachment', 0.55,
-            'Review', 0.40,
-            0.32
-          ]
-        }
-      });
-
-      // 2. Crisp Wall Boundaries (Solid Snapped Green / Red Outline)
-      rightMap.addLayer({
-        id: 'harmonized-line',
-        type: 'line',
-        source: 'harmonized-parcels',
-        paint: {
-          'line-color': [
-            'match',
-            ['get', 'status'],
-            'Encroachment', '#f43f5e',
-            'Review', '#f59e0b',
-            'Approved', '#10b981',
-            '#10b981'
-          ],
-          'line-width': [
-            'match',
-            ['get', 'status'],
-            'Encroachment', 3.2,
-            2.2
-          ]
-        }
-      });
-
-      // 3. 3D Digital Twin Building Extrusions (Active when 3D enabled)
-      rightMap.addLayer({
-        id: 'harmonized-3d-extrusion',
-        type: 'fill-extrusion',
-        source: 'harmonized-parcels',
-        layout: {
-          visibility: viewMode === '3d' ? 'visible' : 'none'
-        },
-        paint: {
-          'fill-extrusion-color': [
-            'match',
-            ['get', 'status'],
-            'Encroachment', '#e11d48',
-            'Review', '#d97706',
-            'Approved', '#059669',
-            '#059669'
-          ],
-          'fill-extrusion-height': ['get', 'ndsm_height_m'],
-          'fill-extrusion-base': 0,
-          'fill-extrusion-opacity': 0.75
-        }
-      });
-
-      // 4. Centroid Labels
-      rightMap.addLayer({
-        id: 'harmonized-labels',
-        type: 'symbol',
-        source: 'harmonized-parcels',
-        layout: {
-          'text-field': ['get', 'khasra_no'],
-          'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-          'text-size': 11,
-          'text-anchor': 'center'
-        },
-        paint: {
-          'text-color': '#ffffff',
-          'text-halo-color': '#000000',
-          'text-halo-width': 1.5
-        }
-      });
-
-      // 5. Municipal Infrastructure (Drainage & Roads)
-      rightMap.addSource('infrastructure-right', {
-        type: 'geojson',
-        data: municipalInfrastructureGeoJSON
-      });
-
-      rightMap.addLayer({
-        id: 'infra-drainage-right',
-        type: 'line',
-        source: 'infrastructure-right',
-        paint: {
-          'line-color': '#06b6d4',
-          'line-width': 4.0,
-          'line-dasharray': [4, 2]
-        }
-      });
-
-      rightMap.addLayer({
-        id: 'infra-road-right',
-        type: 'line',
-        source: 'infrastructure-right',
-        paint: {
-          'line-color': '#f59e0b',
-          'line-width': 8.0,
-          'line-opacity': 0.5
-        }
-      });
-
-      // Parcel Click Handler
-      rightMap.on('click', 'harmonized-fill', (e) => {
-        if (e.features && e.features.length > 0) {
-          const props = e.features[0].properties;
-          onSelectParcel(props);
-        }
-      });
-
-      // Cursor & Hover Tooltip
-      rightMap.on('mousemove', 'harmonized-fill', (e) => {
-        rightMap.getCanvas().style.cursor = 'pointer';
-        if (e.features && e.features.length > 0) {
-          setHoveredInfo({
-            props: e.features[0].properties,
-            x: e.point.x,
-            y: e.point.y
-          });
-        }
-      });
-
-      rightMap.on('mouseleave', 'harmonized-fill', () => {
-        rightMap.getCanvas().style.cursor = '';
-        setHoveredInfo(null);
-      });
+    rightMap.on('mouseleave', 'harmonized-fill', () => {
+      rightMap.getCanvas().style.cursor = '';
+      setHoveredInfo(null);
     });
 
     return () => {
       leftMap.remove();
       rightMap.remove();
     };
-  }, [createMapStyle]);
+  }, []); // Run once on mount
+
+  // Sync data updates dynamically to existing map sources
+  useEffect(() => {
+    try {
+      if (leftMapRef.current && leftMapRef.current.isStyleLoaded()) {
+        const src = leftMapRef.current.getSource('legacy-parcels');
+        if (src) src.setData(legacyGeoJSON);
+      }
+      if (rightMapRef.current && rightMapRef.current.isStyleLoaded()) {
+        const src = rightMapRef.current.getSource('harmonized-parcels');
+        if (src) src.setData(harmonizedGeoJSON);
+      }
+    } catch (e) {
+      // Ignored if style is updating
+    }
+  }, [legacyGeoJSON, harmonizedGeoJSON]);
+
+  // Update selected parcel filter and smooth flyTo
+  useEffect(() => {
+    if (rightMapRef.current && rightMapRef.current.isStyleLoaded() && rightMapRef.current.getLayer('harmonized-selected')) {
+      rightMapRef.current.setFilter('harmonized-selected', [
+        '==',
+        ['get', 'parcel_id'],
+        selectedParcel?.parcel_id || ''
+      ]);
+    }
+    if (selectedParcel?.centroid && rightMapRef.current) {
+      rightMapRef.current.flyTo({
+        center: selectedParcel.centroid,
+        zoom: 18.4,
+        duration: 800
+      });
+    }
+  }, [selectedParcel]);
+
+  // Fly to sector center when sector changes
+  useEffect(() => {
+    if (sectorInfo?.center && rightMapRef.current) {
+      rightMapRef.current.flyTo({
+        center: sectorInfo.center,
+        zoom: sectorInfo.zoom || DEFAULT_ZOOM,
+        duration: 1000
+      });
+    }
+  }, [sectorInfo]);
+
+  // Apply Layer Visibility & Opacity updates dynamically
+  useEffect(() => {
+    const lm = leftMapRef.current;
+    const rm = rightMapRef.current;
+
+    // Left Map
+    if (lm && lm.isStyleLoaded()) {
+      const legVis = layerVisibility?.legacy !== false ? 'visible' : 'none';
+      if (lm.getLayer('legacy-fill')) {
+        lm.setLayoutProperty('legacy-fill', 'visibility', legVis);
+        lm.setPaintProperty('legacy-fill', 'fill-opacity', 0.35 * (layerOpacity?.legacy ?? 0.85));
+      }
+      if (lm.getLayer('legacy-line')) lm.setLayoutProperty('legacy-line', 'visibility', legVis);
+
+      const drainVis = layerVisibility?.drainage !== false ? 'visible' : 'none';
+      if (lm.getLayer('infra-drainage-left')) lm.setLayoutProperty('infra-drainage-left', 'visibility', drainVis);
+
+      const roadVis = layerVisibility?.roadRow !== false ? 'visible' : 'none';
+      if (lm.getLayer('infra-road-left')) lm.setLayoutProperty('infra-road-left', 'visibility', roadVis);
+    }
+
+    // Right Map
+    if (rm && rm.isStyleLoaded()) {
+      const aiVis = layerVisibility?.aiWalls !== false ? 'visible' : 'none';
+      if (rm.getLayer('harmonized-fill')) {
+        rm.setLayoutProperty('harmonized-fill', 'visibility', aiVis);
+        rm.setPaintProperty('harmonized-fill', 'fill-opacity', [
+          'match',
+          ['get', 'status'],
+          'Encroachment', 0.58 * (layerOpacity?.aiWalls ?? 0.95),
+          'Review', 0.42 * (layerOpacity?.aiWalls ?? 0.95),
+          0.34 * (layerOpacity?.aiWalls ?? 0.95)
+        ]);
+      }
+      if (rm.getLayer('harmonized-line')) rm.setLayoutProperty('harmonized-line', 'visibility', aiVis);
+      if (rm.getLayer('harmonized-3d-extrusion')) {
+        rm.setLayoutProperty('harmonized-3d-extrusion', 'visibility', viewMode === '3d' && aiVis === 'visible' ? 'visible' : 'none');
+      }
+
+      const drainVis = layerVisibility?.drainage !== false ? 'visible' : 'none';
+      if (rm.getLayer('infra-drainage-right')) rm.setLayoutProperty('infra-drainage-right', 'visibility', drainVis);
+
+      const roadVis = layerVisibility?.roadRow !== false ? 'visible' : 'none';
+      if (rm.getLayer('infra-road-right')) rm.setLayoutProperty('infra-road-right', 'visibility', roadVis);
+    }
+  }, [layerVisibility, layerOpacity, viewMode]);
 
   // Update Basemap Style dynamically
   const handleChangeBasemap = (key) => {
     setActiveBasemap(key);
-    const newStyle = createMapStyle(key);
-    if (leftMapRef.current) leftMapRef.current.setStyle(newStyle);
-    if (rightMapRef.current) rightMapRef.current.setStyle(newStyle);
+    if (leftMapRef.current) leftMapRef.current.setStyle(createLeftMapStyle(key));
+    if (rightMapRef.current) rightMapRef.current.setStyle(createRightMapStyle(key));
   };
 
   // Toggle 3D Digital Twin Pitch and 3D Extrusion
@@ -362,15 +604,15 @@ export default function MapLibreView({
     }
     if (rightMapRef.current) {
       rightMapRef.current.easeTo({ pitch, bearing, duration: 800 });
-      if (rightMapRef.current.getLayer('harmonized-3d-extrusion')) {
+      if (rightMapRef.current.isStyleLoaded() && rightMapRef.current.getLayer('harmonized-3d-extrusion')) {
         rightMapRef.current.setLayoutProperty(
           'harmonized-3d-extrusion',
           'visibility',
-          viewMode === '3d' ? 'visible' : 'none'
+          viewMode === '3d' && layerVisibility?.aiWalls !== false ? 'visible' : 'none'
         );
       }
     }
-  }, [viewMode]);
+  }, [viewMode, layerVisibility]);
 
   // Smooth Split-Screen Slider Dragging
   const handleSliderMouseDown = (e) => {
@@ -399,9 +641,11 @@ export default function MapLibreView({
 
   const handleResetView = () => {
     if (rightMapRef.current) {
+      const centerCoord = sectorInfo?.center || PUNE_CENTER;
+      const zoomLevel = sectorInfo?.zoom || DEFAULT_ZOOM;
       rightMapRef.current.flyTo({
-        center: PUNE_CENTER,
-        zoom: DEFAULT_ZOOM,
+        center: centerCoord,
+        zoom: zoomLevel,
         pitch: viewMode === '3d' ? 50 : 0,
         bearing: viewMode === '3d' ? -15 : 0,
         duration: 800
@@ -465,37 +709,37 @@ export default function MapLibreView({
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
         <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200 dark:border-slate-800 shadow-xl flex items-center space-x-3 text-xs font-mono font-semibold text-slate-800 dark:text-slate-200">
           <div className="flex items-center space-x-1.5">
-            <span className="text-cyan-500 font-bold">📍 Ward 14, Pune</span>
+            <span className="text-cyan-500 font-bold">📍 {sectorInfo?.name || 'Ward 14, Pune'}</span>
             <span className="text-slate-400">|</span>
-            <span>1,420 Parcels</span>
+            <span>{totalCount.toLocaleString()} Parcels</span>
           </div>
 
           <span className="text-slate-300 dark:text-slate-700">|</span>
 
           <div className="flex items-center space-x-1 text-emerald-600 dark:text-emerald-400">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>96.4% Harmonized</span>
+            <span>{harmonizedRate}% Harmonized</span>
           </div>
 
           <span className="text-slate-300 dark:text-slate-700">|</span>
 
           <div className="flex items-center space-x-1 text-rose-600 dark:text-rose-400">
             <AlertTriangle className="w-3.5 h-3.5 animate-pulse" />
-            <span>28 Encroachments Flagged</span>
+            <span>{conflictCount} Encroachments Flagged</span>
           </div>
         </div>
       </div>
 
       {/* Floating Split Mode Badges */}
       <div className="absolute top-4 left-4 z-20 pointer-events-none">
-        <div className="bg-blue-900/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-blue-400/40 text-blue-200 font-mono text-xs font-bold shadow-lg flex items-center space-x-1.5">
+        <div className="bg-blue-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-blue-400/50 text-blue-200 font-mono text-xs font-bold shadow-lg flex items-center space-x-1.5">
           <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
           <span>LEGACY DISTORTED (Shajra)</span>
         </div>
       </div>
 
       <div className="absolute top-4 right-4 z-20 pointer-events-none">
-        <div className="bg-emerald-950/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-emerald-400/40 text-emerald-200 font-mono text-xs font-bold shadow-lg flex items-center space-x-1.5">
+        <div className="bg-emerald-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-emerald-400/50 text-emerald-200 font-mono text-xs font-bold shadow-lg flex items-center space-x-1.5">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span>AI HARMONIZED (SAM-2 + nDSM)</span>
         </div>
@@ -527,6 +771,18 @@ export default function MapLibreView({
           >
             <MapIcon className="w-3.5 h-3.5" />
             <span>Carto Positron</span>
+          </button>
+
+          <button
+            onClick={() => handleChangeBasemap('voyager')}
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              activeBasemap === 'voyager'
+                ? 'bg-cyan-600 text-white shadow-md'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <Compass className="w-3.5 h-3.5" />
+            <span>Voyager</span>
           </button>
 
           <button
