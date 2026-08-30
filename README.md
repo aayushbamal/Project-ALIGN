@@ -4,6 +4,7 @@
 
 [![Vercel Production](https://img.shields.io/badge/Vercel-Live%20Deployment-10b981?style=for-the-badge&logo=vercel)](https://sih-project-align.vercel.app)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-sih__project__align-06b6d4?style=for-the-badge&logo=github)](https://github.com/aayushbamal/sih_project_align)
+[![Ministry](https://img.shields.io/badge/Ministry-Rural%20Development%20(DoLR)-6366f1?style=for-the-badge)](https://sih-project-align.vercel.app)
 
 ---
 
@@ -132,3 +133,11 @@ cd backend
 python -m uvicorn app.main:app --port 8000 --host 127.0.0.1
 ```
 Interactive API documentation will be available at **[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)**.
+
+---
+
+## 🏛️ Strategic Alignment & National Initiatives
+Project A.L.I.G.N. is built in direct alignment with:
+* **Department of Land Resources (DoLR)**, Ministry of Rural Development, Government of India.
+* **SVAMITVA Scheme**: Survey of Villages and Mapping with Improvised Technology in Village Areas.
+* **NAKSHA Program**: National Cadastral Digitization & Modernization Architecture.
