@@ -1,5 +1,5 @@
 # Project A.L.I.G.N.
-## Autonomous Land Integration & GeoAI Network for Urban Cadastral Record Harmonization
+## Autonomous Land Integration & GeoAI Network
 **Ministry of Rural Development (DoLR / NAKSHA & SVAMITVA) | Problem Statement: SIH26013**
 
 [![Vercel Production](https://img.shields.io/badge/Vercel-Live%20Deployment-10b981?style=for-the-badge&logo=vercel)](https://project-align-geoai.vercel.app)
