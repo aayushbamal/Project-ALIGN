@@ -2,12 +2,12 @@
 ## Autonomous Land Integration & GeoAI Network for Urban Cadastral Record Harmonization
 **Ministry of Rural Development (DoLR / NAKSHA & SVAMITVA) | Problem Statement: SIH26013**
 
-[![Vercel Production](https://img.shields.io/badge/Vercel-Live%20Deployment-10b981?style=for-the-badge&logo=vercel)](https://project-align-geoai.vercel.app)
-[![GitHub Repository](https://img.shields.io/badge/GitHub-Project--ALIGN-06b6d4?style=for-the-badge&logo=github)](https://github.com/aayushbamal/Project-ALIGN)
+[![Vercel Production](https://img.shields.io/badge/Vercel-Live%20Deployment-10b981?style=for-the-badge&logo=vercel)](https://sih-project-align.vercel.app)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-sih__project__align-06b6d4?style=for-the-badge&logo=github)](https://github.com/aayushbamal/sih_project_align)
 
 ---
 ### 🌐 Live Production Application
-👉 **[https://project-align-geoai.vercel.app](https://project-align-geoai.vercel.app)** *(Alternative: [https://align-cadastre.vercel.app](https://align-cadastre.vercel.app))*
+👉 **[https://sih-project-align.vercel.app](https://sih-project-align.vercel.app)**
 
 ### Key Features
 1. **Interactive Split-Screen Swipe Comparison**: Real-time before/after comparison between legacy cloth maps (*Shajra*) and AI-snapped boundaries (*SAM-2 + nDSM Eaves*).
