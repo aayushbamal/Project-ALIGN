@@ -26,7 +26,7 @@ export default function Header({
             </h1>
             <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-500 border border-brand-500/30 flex items-center space-x-1">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse mr-1"></span>
-              DoLR / NAKSHA & SVAMITVA
+              GeoAI Cadastral Engine
             </span>
           </div>
           <p className="text-[11px] text-slate-400 -mt-0.5">

@@ -4,8 +4,6 @@
 
 [![Vercel Production](https://img.shields.io/badge/Vercel-Live%20Deployment-10b981?style=for-the-badge&logo=vercel)](https://sih-project-align.vercel.app)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-sih__project__align-06b6d4?style=for-the-badge&logo=github)](https://github.com/aayushbamal/sih_project_align)
-[![Problem Statement](https://img.shields.io/badge/SIH%202024-Problem%20SIH26013-f59e0b?style=for-the-badge)](https://sih-project-align.vercel.app)
-[![Ministry](https://img.shields.io/badge/Ministry-Rural%20Development%20(DoLR)-6366f1?style=for-the-badge)](https://sih-project-align.vercel.app)
 
 ---
 
@@ -16,7 +14,7 @@
 
 ## 📖 The Problem We Are Solving (In Simple Words)
 
-In India, land boundaries for millions of properties were originally drawn decades (or centuries) ago on hand-made cloth and paper maps called **Shajra** or **Village Cadastres**. 
+In many regions, land boundaries for millions of properties were originally drawn decades (or centuries) ago on hand-made cloth and paper maps called **Shajra** or **Village Cadastres**. 
 
 Over time, two major problems occurred:
 1. **Physical Distortion**: Paper and cloth naturally stretch, shrink, tear, and warp.
@@ -37,7 +35,7 @@ flowchart TD
     subgraph Inputs["1. Raw Historical & Spatial Data"]
         A["📜 Distorted Cloth Maps<br/>(Legacy Shajra / Paper Cadastre)"]
         B["🛰️ Drone & Satellite Imagery<br/>(5cm High-Resolution Orthophoto)"]
-        C["📋 Land Registry Records<br/>(7/12 Extracts & Vernacular Text)"]
+        C["📋 Land Registry Records<br/>(Title Deeds & Vernacular Text)"]
     end
 
     subgraph GeoAI["2. GeoAI Harmonization Engine"]
@@ -49,7 +47,7 @@ flowchart TD
 
     subgraph Outputs["3. Clean Digital Land Registry"]
         H["🗺️ Interactive WebGIS Command Center<br/>(Live Before/After Split Comparison)"]
-        I["🪪 Bhu-Aadhaar (ULPIN) Title Cards<br/>(Unique 14-digit Land Aadhaar + QR)"]
+        I["🪪 Bhu-Aadhaar (ULPIN) Title Cards<br/>(Unique 14-digit Land ID + QR)"]
         J["⚖️ Statutory Dispute & Notice Engine<br/>(Automated Legal Notice Generator)"]
     end
 
@@ -79,14 +77,14 @@ flowchart TD
 
 ### 3. 🚨 Instant Encroachment & Conflict Detection
 * The system automatically scans municipal buffer zones (e.g., $3\text{m}$ stormwater drainage lines and $14\text{m}$ road corridors).
-* Parcels encroaching on public land are highlighted in **Crimson Red**, and the system automatically drafts a statutory **Section 248 Land Revenue Notice**.
+* Parcels encroaching on public land are highlighted in **Crimson Red**, and the system automatically drafts statutory legal notices.
 
 ### 4. 🪪 Instant "Bhu-Aadhaar" (ULPIN) Land ID & QR Cards
-* Just like Aadhaar identifies citizens, **ULPIN** (Unique Land Parcel Identification Number) identifies land parcels.
+* Just like unique IDs identify citizens, **ULPIN** (Unique Land Parcel Identification Number) identifies land parcels.
 * Click any property on the map to inspect ownership details, legal vs. surveyed area delta, and download a verifiable QR title card.
 
 ### 5. 🗣️ Multilingual Name Matching (Devanagari ⇄ English)
-* Indian land registries often store owner names in regional scripts (Marathi, Hindi) while modern records use English.
+* Land registries often store owner names in regional scripts (Marathi, Hindi) while modern records use English.
 * A.L.I.G.N. uses phonetic AI matching (*IndicSoundex*) to link names like **"संजय दत्तात्रय कुलकर्णी"** to **"Sanjay D. Kulkarni"** without spelling error mismatches.
 
 ### 6. 🏙️ Multi-Sector Support
@@ -103,7 +101,7 @@ flowchart TD
 | :--- | :--- | :--- |
 | **Frontend WebGIS** | **React 18 + Vite** | Ultra-responsive command center interface |
 | **Map Rendering** | **MapLibre GL JS** | Hardware-accelerated 2D/3D vector & raster mapping |
-| **Styling & Icons** | **Tailwind CSS + Lucide** | Clean, dark-mode government dashboard aesthetics |
+| **Styling & Icons** | **Tailwind CSS + Lucide** | Clean, dark-mode geospatial dashboard aesthetics |
 | **Basemap Provider** | **CARTO Voyager & Esri Satellite** | High-definition satellite & road context tiles |
 | **GeoAI Microservice**| **FastAPI + Python 3.11** | High-performance backend API for geospatial algorithms |
 | **Geometric Conflation**| **Shapely 2.0 + GeoPandas** | Polygon snapping, vertex rounding, and sliver elimination |
@@ -134,11 +132,3 @@ cd backend
 python -m uvicorn app.main:app --port 8000 --host 127.0.0.1
 ```
 Interactive API documentation will be available at **[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)**.
-
----
-
-## 🏛️ Government Alignment & Compliance
-Project A.L.I.G.N. is built in direct alignment with:
-* **SVAMITVA Scheme**: Survey of Villages and Mapping with Improvised Technology in Village Areas.
-* **NAKSHA Program**: National Cadastral Digitization & Geographic Information System.
-* **Department of Land Resources (DoLR)**, Ministry of Rural Development, Government of India.
