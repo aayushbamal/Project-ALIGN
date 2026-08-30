@@ -1,6 +1,17 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import { Map } from 'maplibre-gl';
+import { Map, setWorkerUrl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
+
+// Configure MapLibre Web Worker for Vite production bundles
+try {
+  if (typeof setWorkerUrl === 'function' && workerUrl) {
+    setWorkerUrl(workerUrl);
+  }
+} catch (e) {
+  console.warn('MapLibre workerUrl setup:', e);
+}
+
 import { 
   Plus, Minus, RotateCcw, Box, Map as MapIcon, 
   Satellite, Sliders, AlertTriangle, Compass, 
