@@ -12,9 +12,9 @@ try {
   console.warn('MapLibre workerUrl setup:', e);
 }
 
-import { 
-  Plus, Minus, RotateCcw, Box, Map as MapIcon, 
-  Satellite, Sliders, AlertTriangle, Compass, 
+import {
+  Plus, Minus, RotateCcw, Box, Map as MapIcon,
+  Satellite, Sliders, AlertTriangle, Compass,
   CheckCircle2, Moon
 } from 'lucide-react';
 import { drainageLine, roadLine } from '../data/puneWard14Data';
@@ -785,11 +785,10 @@ export default function MapLibreView({
         <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center space-x-1">
           <button
             onClick={() => handleChangeBasemap('satellite')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-              activeBasemap === 'satellite'
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeBasemap === 'satellite'
                 ? 'bg-cyan-600 text-white shadow-md'
                 : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
+              }`}
           >
             <Satellite className="w-3.5 h-3.5" />
             <span>Esri Satellite</span>
@@ -797,11 +796,10 @@ export default function MapLibreView({
 
           <button
             onClick={() => handleChangeBasemap('streets')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-              activeBasemap === 'streets'
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeBasemap === 'streets'
                 ? 'bg-cyan-600 text-white shadow-md'
                 : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
+              }`}
           >
             <MapIcon className="w-3.5 h-3.5" />
             <span>Carto Positron</span>
@@ -809,11 +807,10 @@ export default function MapLibreView({
 
           <button
             onClick={() => handleChangeBasemap('voyager')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-              activeBasemap === 'voyager'
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeBasemap === 'voyager'
                 ? 'bg-cyan-600 text-white shadow-md'
                 : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
+              }`}
           >
             <Compass className="w-3.5 h-3.5" />
             <span>Voyager</span>
@@ -821,11 +818,10 @@ export default function MapLibreView({
 
           <button
             onClick={() => handleChangeBasemap('dark')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-              activeBasemap === 'dark'
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeBasemap === 'dark'
                 ? 'bg-cyan-600 text-white shadow-md'
                 : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-            }`}
+              }`}
           >
             <Moon className="w-3.5 h-3.5" />
             <span>Dark Matter</span>
@@ -835,11 +831,10 @@ export default function MapLibreView({
         {/* 2D / 3D Digital Twin Extrusion Toggle */}
         <button
           onClick={() => onChangeViewMode(viewMode === '2d' ? '3d' : '2d')}
-          className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold shadow-xl border backdrop-blur-md transition-all ${
-            viewMode === '3d'
+          className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold shadow-xl border backdrop-blur-md transition-all ${viewMode === '3d'
               ? 'bg-emerald-600 text-white border-emerald-500 shadow-emerald-500/20'
               : 'bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:bg-slate-100'
-          }`}
+            }`}
         >
           <Box className="w-4 h-4 text-cyan-400" />
           <span>{viewMode === '3d' ? '3D Digital Twin (Active)' : 'Enable 3D Extrusion'}</span>
@@ -888,13 +883,12 @@ export default function MapLibreView({
               {hoveredInfo.props.khasra_no}
             </span>
             <span
-              className={`px-1.5 py-0.5 rounded font-mono text-[9px] font-bold ${
-                hoveredInfo.props.status === 'Encroachment'
+              className={`px-1.5 py-0.5 rounded font-mono text-[9px] font-bold ${hoveredInfo.props.status === 'Encroachment'
                   ? 'bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30'
                   : hoveredInfo.props.status === 'Review'
-                  ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30'
-                  : 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
-              }`}
+                    ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30'
+                    : 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                }`}
             >
               {hoveredInfo.props.status_chip || hoveredInfo.props.status}
             </span>

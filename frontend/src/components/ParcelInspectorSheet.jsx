@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  X, FileText, AlertTriangle, ShieldCheck, CheckCircle2, 
+import {
+  X, FileText, AlertTriangle, ShieldCheck, CheckCircle2,
   Copy, Check, Download, ExternalLink, QrCode, ArrowRight, Building, Sparkles
 } from 'lucide-react';
 import { generateBhuAadhaarPDF, generateEncroachmentNoticePDF } from '../utils/pdf-generator';

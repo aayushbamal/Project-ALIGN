@@ -141,7 +141,7 @@ def generate_pune_ward14_data() -> Dict[str, Any]:
             elif len(encroachment_conflicts) < 28 and (parcel_idx in [14, 28, 45, 78, 109, 142, 198, 230, 267, 310, 355, 412, 480, 520, 580, 640, 710, 790, 850, 920, 990, 1060, 1120, 1190, 1250, 1310, 1370, 1410]):
                 is_encroaching = True
                 encroachment_type = "Stormwater Drainage Canal Encroachment" if parcel_idx % 2 == 0 else "Municipal Road Right-of-Way (RoW) Encroachment"
-                encroached_area = round(float(np.random.uniform(8.5, 26.4)), 2)
+                encroached_area = round(float(12.5 + ((parcel_idx * 7) % 15) * 1.4), 2)
             else:
                 is_encroaching = False
                 encroachment_type = None
@@ -159,7 +159,7 @@ def generate_pune_ward14_data() -> Dict[str, Any]:
 
             # Confidence score calculation
             if is_encroaching:
-                raw_score = 42.1 + (parcel_idx % 18)
+                raw_score = 41.0 + (parcel_idx % 18)
                 status = "Encroachment"
                 status_chip = "ENCROACHMENT"
                 confidence_score = round(raw_score, 1)
