@@ -67,11 +67,12 @@ export function generateSectorData(sectorId = 'pune_ward14') {
   const parcels = [];
   const conflicts = [];
 
-  const encroachmentIndices = new Set([
-    14, 28, 45, 78, 109, 142, 198, 230, 267, 310, 
-    355, 412, 480, 520, 580, 640, 710, 790, 850, 
-    920, 990, 1060, 1120, 1190, 1250, 1310, 1370, 1410
-  ]);
+  // Generate 28 well-distributed encroachment indices across the parcel grid
+  const numConflicts = 28;
+  const step = Math.max(1, Math.floor(total / (numConflicts + 2)));
+  const encroachmentIndices = new Set(
+    Array.from({ length: numConflicts }, (_, i) => Math.min(total - 2, (i + 1) * step + (i % 3) * 2))
+  );
 
   let parcelIdx = 0;
   let conflictCounter = 1;
@@ -126,9 +127,9 @@ export function generateSectorData(sectorId = 'pune_ward14') {
         encroachmentType = parcelIdx % 2 === 0 
           ? "Stormwater Drainage Canal Encroachment" 
           : "Municipal Road Right-of-Way (RoW) Encroachment";
-        encroachedArea = +(11.5 + (parcelIdx % 15) * 1.2).toFixed(1);
-        confidence = +(42.0 + (parcelIdx % 18)).toFixed(1);
-        // Legal area is smaller than surveyed ground truth due to illegal buffer overlap
+        encroachedArea = +(12.5 + ((parcelIdx * 7) % 15) * 1.4).toFixed(1);
+        confidence = +(41.0 + (parcelIdx % 18)).toFixed(1);
+        // Legal deed area is smaller than surveyed ground truth due to illegal buffer overlap
         legalArea = +(surveyedArea - encroachedArea).toFixed(1);
       } else {
         // Realistic historical chain survey variance (±0.8% to ±3.4%)
@@ -162,6 +163,7 @@ export function generateSectorData(sectorId = 'pune_ward14') {
         khasra_no: khasraNo,
         owner_vernacular: ownerVernacular,
         owner_en: ownerEn,
+        owner_name: ownerEn,
         legal_area_sqm: legalArea,
         surveyed_area_sqm: surveyedArea,
         area_diff_sqm: areaDiff,
@@ -173,29 +175,38 @@ export function generateSectorData(sectorId = 'pune_ward14') {
         eave_buffer_m: ndsmHeight >= 3.0 ? 0.40 : 0.0,
         is_encroaching: isEncroaching,
         encroachment_type: encroachmentType,
+        discrepancy_type: encroachmentType,
         encroached_area_sqm: encroachedArea,
+        variance_sqm: `+${encroachedArea} sq.m`,
         coordinates_ai: aiCoords,
         coordinates_legacy: legacyCoords,
         centroid: [+(x0 + w/2).toFixed(6), +(y0 + h/2).toFixed(6)],
-        iou_pct: +(96.2 + Math.cos(parcelIdx) * 2.1).toFixed(1)
+        iou_pct: isEncroaching ? +(62.5 + (parcelIdx % 8) * 1.5).toFixed(1) : +(96.2 + Math.cos(parcelIdx) * 2.1).toFixed(1)
       };
 
       parcels.push(parcelObj);
 
-      if (isEncroaching && conflicts.length < 28) {
+      if (isEncroaching && conflicts.length < numConflicts) {
         conflicts.push({
           id: `ENC-${String(conflictCounter).padStart(3, '0')}`,
           parcel_id: parcelId,
           ulpin,
           owner_name: ownerEn,
+          owner_en: ownerEn,
           owner_vernacular: ownerVernacular,
           khasra_no: khasraNo,
           discrepancy_type: encroachmentType,
+          encroachment_type: encroachmentType,
           variance_sqm: `+${encroachedArea} sq.m`,
           encroached_area_sqm: encroachedArea,
+          legal_area_sqm: legalArea,
+          surveyed_area_sqm: surveyedArea,
           confidence: `${confidence}%`,
+          confidence_score: confidence,
           confidence_num: confidence,
           centroid: parcelObj.centroid,
+          coordinates_ai: aiCoords,
+          coordinates_legacy: legacyCoords,
           legal_action_required: "Issue Notice u/s 248 MLRC"
         });
         conflictCounter++;

@@ -69,18 +69,24 @@ function parcelsToHarmonizedGeoJSON(parcels) {
           parcel_id: p.parcel_id || `MH-${idx}`,
           ulpin: p.ulpin || '',
           khasra_no: p.khasra_no || `${idx}`,
-          owner_en: p.owner_en || '',
+          owner_en: p.owner_en || p.owner_name || '',
+          owner_name: p.owner_en || p.owner_name || '',
           owner_vernacular: p.owner_vernacular || '',
           legal_area_sqm: p.legal_area_sqm || 0,
           surveyed_area_sqm: p.surveyed_area_sqm || 0,
+          area_diff_sqm: p.area_diff_sqm !== undefined ? p.area_diff_sqm : +( (p.surveyed_area_sqm || 0) - (p.legal_area_sqm || 0) ).toFixed(1),
           delta_area_pct: p.delta_area_pct || 0,
           confidence_score: p.confidence_score || 95,
           status: p.status || 'Approved',
           status_chip: p.status_chip || p.status || 'APPROVED',
           ndsm_height_m: p.ndsm_height_m || 6.5,
+          eave_buffer_m: p.eave_buffer_m || 0.0,
           is_encroaching: !!p.is_encroaching,
-          encroachment_type: p.encroachment_type || '',
+          encroachment_type: p.encroachment_type || p.discrepancy_type || '',
+          discrepancy_type: p.discrepancy_type || p.encroachment_type || '',
           encroached_area_sqm: p.encroached_area_sqm || 0,
+          variance_sqm: p.variance_sqm || `+${p.encroached_area_sqm || 0} sq.m`,
+          iou_pct: p.iou_pct || 96.2,
           centroid: p.centroid || rawCoords[0]
         },
         geometry: {
@@ -107,13 +113,20 @@ function parcelsToLegacyGeoJSON(parcels) {
           parcel_id: p.parcel_id || `MH-${idx}`,
           ulpin: p.ulpin || '',
           khasra_no: p.khasra_no || `${idx}`,
-          owner_en: p.owner_en || '',
+          owner_en: p.owner_en || p.owner_name || '',
+          owner_name: p.owner_en || p.owner_name || '',
           owner_vernacular: p.owner_vernacular || '',
           legal_area_sqm: p.legal_area_sqm || 0,
           surveyed_area_sqm: p.surveyed_area_sqm || 0,
+          area_diff_sqm: p.area_diff_sqm !== undefined ? p.area_diff_sqm : +( (p.surveyed_area_sqm || 0) - (p.legal_area_sqm || 0) ).toFixed(1),
+          delta_area_pct: p.delta_area_pct || 0,
           status: p.status || 'Approved',
           status_chip: 'LEGACY DISTORTED',
           confidence_score: 55.0,
+          is_encroaching: !!p.is_encroaching,
+          encroachment_type: p.encroachment_type || p.discrepancy_type || '',
+          discrepancy_type: p.discrepancy_type || p.encroachment_type || '',
+          encroached_area_sqm: p.encroached_area_sqm || 0,
           isLegacy: true,
           centroid: p.centroid || rawCoords[0]
         },
@@ -479,7 +492,17 @@ export default function MapLibreView({
     rightMap.on('click', 'harmonized-fill', (e) => {
       if (e.features && e.features.length > 0) {
         const props = e.features[0].properties;
-        if (onSelectParcel) onSelectParcel(props);
+        const matched = parcelsList?.find(p => p.parcel_id === props.parcel_id) || props;
+        if (onSelectParcel) onSelectParcel(matched);
+      }
+    });
+
+    // Parcel Click Handler on Left Map
+    leftMap.on('click', 'legacy-fill', (e) => {
+      if (e.features && e.features.length > 0) {
+        const props = e.features[0].properties;
+        const matched = parcelsList?.find(p => p.parcel_id === props.parcel_id) || props;
+        if (onSelectParcel) onSelectParcel(matched);
       }
     });
 

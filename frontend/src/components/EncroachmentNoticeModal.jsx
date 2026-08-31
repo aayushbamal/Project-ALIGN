@@ -37,8 +37,8 @@ export default function EncroachmentNoticeModal({ isOpen, onClose, conflict }) {
         {/* Notice Preview Body */}
         <div className="p-5 space-y-4 text-xs">
           <div className="p-3 bg-rose-950/20 border border-rose-500/30 rounded-xl space-y-1.5 font-mono text-[11px]">
-            <div className="text-rose-400 font-bold">NOTICE REF: PMC/REV/ENC/2026/{conflict.id || '001'}</div>
-            <div className="text-slate-300">TO: <b className="text-white">{conflict.owner_name} ({conflict.owner_vernacular})</b></div>
+            <div className="text-rose-400 font-bold">NOTICE REF: PMC/REV/ENC/2026/{conflict.id || `ENC-${(conflict.parcel_id || '001').replace(/[^a-zA-Z0-9]/g, '')}`}</div>
+            <div className="text-slate-300">TO: <b className="text-white">{conflict.owner_name || conflict.owner_en} ({conflict.owner_vernacular})</b></div>
             <div className="text-slate-400">ULPIN: {conflict.ulpin} | Khasra: {conflict.khasra_no}</div>
             <div className="text-slate-400">Location: Ward 14, Pune Urban Sector (Haveli Taluk)</div>
           </div>
@@ -49,10 +49,10 @@ export default function EncroachmentNoticeModal({ isOpen, onClose, conflict }) {
               Autonomous GeoAI drone surveillance (5cm GSD) and topological conflation have detected an unauthorized physical structure encroaching beyond legally registered boundaries:
             </p>
             <div className="p-2.5 rounded bg-rose-950/50 border border-rose-500/40 font-mono text-[11px] text-rose-300 space-y-1">
-              <div>• Violation: <b>{conflict.discrepancy_type}</b></div>
+              <div>• Violation: <b>{conflict.discrepancy_type || conflict.encroachment_type || 'Stormwater Drainage Canal Encroachment'}</b></div>
               <div>• Measured Encroachment Area: <b>{conflict.variance_sqm || `+${conflict.encroached_area_sqm} sq.m`}</b></div>
-              <div>• Centroid: <b>{conflict.centroid?.[1]?.toFixed(6)}° N, {conflict.centroid?.[0]?.toFixed(6)}° E</b></div>
-              <div>• AI Confidence: <b>{conflict.confidence}</b></div>
+              <div>• Centroid: <b>{Array.isArray(conflict.centroid) ? `${Number(conflict.centroid[1] || 18.5204).toFixed(6)}° N, ${Number(conflict.centroid[0] || 73.8567).toFixed(6)}° E` : '18.520400° N, 73.856700° E'}</b></div>
+              <div>• AI Confidence: <b>{typeof conflict.confidence === 'string' ? conflict.confidence : `${conflict.confidence_score || conflict.confidence || 42.5}%`}</b></div>
             </div>
             <p className="text-[11px] text-slate-400">
               You are required to show cause within 15 days or remove the structure, failing which summary municipal demolition will be executed.
