@@ -120,11 +120,6 @@ def generate_pune_ward14_data() -> Dict[str, Any]:
             # Multilingual score
             s_text, match_info = IndicSoundexMatcher.match_names(owner_vernacular, owner_en)
 
-            # Area calculations
-            legal_area_sqm = round(surveyed_area_sqm * np.random.uniform(0.98, 1.02), 2)
-            delta_area = compute_area_variance_ratio(legal_area_sqm, surveyed_area_sqm)
-            area_diff_sqm = round(surveyed_area_sqm - legal_area_sqm, 2)
-
             # SAM-2 Boundary Segmentation Accuracy (FR-2 / Benchmarking standard >= 94.5%)
             segmentation_iou = round(float(np.random.uniform(0.952, 0.984)), 4)
             conflation_iou = ConfidenceAuditor.calculate_iou(legacy_poly, ai_poly)
@@ -151,6 +146,16 @@ def generate_pune_ward14_data() -> Dict[str, Any]:
                 is_encroaching = False
                 encroachment_type = None
                 encroached_area = 0.0
+
+            # Area calculations
+            if is_encroaching:
+                legal_area_sqm = round(surveyed_area_sqm - encroached_area, 2)
+            else:
+                variance_factor = 0.968 + (((parcel_idx * 13) % 45) * 0.0014)
+                legal_area_sqm = round(surveyed_area_sqm * (0.985 if variance_factor == 1.0 else variance_factor), 2)
+
+            delta_area = compute_area_variance_ratio(legal_area_sqm, surveyed_area_sqm)
+            area_diff_sqm = round(surveyed_area_sqm - legal_area_sqm, 2)
 
             # Confidence score calculation
             if is_encroaching:

@@ -112,7 +112,30 @@ export function generateSectorData(sectorId = 'pune_ward14') {
       ];
 
       const surveyedArea = +(w * h * 111000 * 111000).toFixed(1);
-      const legalArea = +(surveyedArea * (0.985 + ((parcelIdx % 7) * 0.005))).toFixed(1);
+      const isEncroaching = encroachmentIndices.has(parcelIdx);
+      let encroachmentType = null;
+      let encroachedArea = 0;
+      let status = "Approved";
+      let statusChip = "APPROVED";
+      let confidence = +(94.0 + (Math.sin(parcelIdx) * 4.5)).toFixed(1);
+
+      let legalArea;
+      if (isEncroaching) {
+        status = "Encroachment";
+        statusChip = "ENCROACHMENT";
+        encroachmentType = parcelIdx % 2 === 0 
+          ? "Stormwater Drainage Canal Encroachment" 
+          : "Municipal Road Right-of-Way (RoW) Encroachment";
+        encroachedArea = +(11.5 + (parcelIdx % 15) * 1.2).toFixed(1);
+        confidence = +(42.0 + (parcelIdx % 18)).toFixed(1);
+        // Legal area is smaller than surveyed ground truth due to illegal buffer overlap
+        legalArea = +(surveyedArea - encroachedArea).toFixed(1);
+      } else {
+        // Realistic historical chain survey variance (±0.8% to ±3.4%)
+        const varianceFactor = 0.968 + (((parcelIdx * 13) % 45) * 0.0014);
+        legalArea = +(surveyedArea * (varianceFactor === 1.0 ? 0.985 : varianceFactor)).toFixed(1);
+      }
+
       const deltaArea = Math.abs(legalArea - surveyedArea) / legalArea;
       const areaDiff = +(surveyedArea - legalArea).toFixed(1);
 
@@ -123,22 +146,7 @@ export function generateSectorData(sectorId = 'pune_ward14') {
       const ownerVernacular = `${firstNamesVernacular[fnIdx]} ${middleNamesVernacular[mnIdx]} ${lastNamesVernacular[lnIdx]}`;
       const ownerEn = `${firstNamesEn[fnIdx]} ${middleNamesEn[mnIdx]} ${lastNamesEn[lnIdx]}`;
 
-      const isEncroaching = encroachmentIndices.has(parcelIdx);
-      let encroachmentType = null;
-      let encroachedArea = 0;
-      let status = "Approved";
-      let statusChip = "APPROVED";
-      let confidence = +(94.0 + (Math.sin(parcelIdx) * 4.5)).toFixed(1);
-
-      if (isEncroaching) {
-        status = "Encroachment";
-        statusChip = "ENCROACHMENT";
-        encroachmentType = parcelIdx % 2 === 0 
-          ? "Stormwater Drainage Canal Encroachment" 
-          : "Municipal Road Right-of-Way (RoW) Encroachment";
-        encroachedArea = +(11.5 + (parcelIdx % 15) * 1.2).toFixed(1);
-        confidence = +(42.0 + (parcelIdx % 18)).toFixed(1);
-      } else if (deltaArea > 0.028 || parcelIdx % 19 === 0) {
+      if (!isEncroaching && (deltaArea > 0.028 || parcelIdx % 19 === 0)) {
         status = "Review";
         statusChip = "REVIEW";
         confidence = +(78.0 + (parcelIdx % 10)).toFixed(1);

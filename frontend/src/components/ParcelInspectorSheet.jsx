@@ -124,30 +124,37 @@ export default function ParcelInspectorSheet({
           </div>
 
           {/* Comparative visual bar */}
-          <div className="space-y-1.5 text-[11px]">
-            <div>
-              <div className="flex justify-between text-slate-400 text-[10px] mb-0.5">
-                <span>Legal RoR Area</span>
-                <span className="font-mono text-slate-200 font-bold">{parcel.legal_area_sqm} m²</span>
-              </div>
-              <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500 rounded-full" style={{ width: '92%' }}></div>
-              </div>
-            </div>
+          {(() => {
+            const maxVal = Math.max(parcel.legal_area_sqm || 1, parcel.surveyed_area_sqm || 1);
+            const legalWidth = `${Math.min(100, Math.max(15, ((parcel.legal_area_sqm || 0) / maxVal) * 96)).toFixed(1)}%`;
+            const surveyedWidth = `${Math.min(100, Math.max(15, ((parcel.surveyed_area_sqm || 0) / maxVal) * 96)).toFixed(1)}%`;
+            return (
+              <div className="space-y-1.5 text-[11px]">
+                <div>
+                  <div className="flex justify-between text-slate-400 text-[10px] mb-0.5">
+                    <span>Legal RoR Area</span>
+                    <span className="font-mono text-slate-200 font-bold">{parcel.legal_area_sqm} m²</span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-full bg-blue-500 rounded-full transition-all duration-500" style={{ width: legalWidth }}></div>
+                  </div>
+                </div>
 
-            <div>
-              <div className="flex justify-between text-slate-400 text-[10px] mb-0.5">
-                <span>Surveyed 5cm ORI Ground Truth</span>
-                <span className="font-mono text-emerald-300 font-bold">{parcel.surveyed_area_sqm} m²</span>
+                <div>
+                  <div className="flex justify-between text-slate-400 text-[10px] mb-0.5">
+                    <span>Surveyed 5cm ORI Ground Truth</span>
+                    <span className="font-mono text-emerald-300 font-bold">{parcel.surveyed_area_sqm} m²</span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full rounded-full transition-all duration-500 ${isEncroaching ? 'bg-rose-500' : 'bg-emerald-400'}`}
+                      style={{ width: surveyedWidth }}
+                    ></div>
+                  </div>
+                </div>
               </div>
-              <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                <div 
-                  className={`h-full rounded-full ${isEncroaching ? 'bg-rose-500' : 'bg-emerald-400'}`}
-                  style={{ width: '94%' }}
-                ></div>
-              </div>
-            </div>
-          </div>
+            );
+          })()}
         </div>
 
         {/* AI Confidence Formula Gauge & Breakdown */}
