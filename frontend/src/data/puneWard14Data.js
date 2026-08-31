@@ -67,11 +67,18 @@ export function generateSectorData(sectorId = 'pune_ward14') {
   const parcels = [];
   const conflicts = [];
 
-  // Generate 28 well-distributed encroachment indices across the parcel grid
-  const numConflicts = 28;
+  // Calculate realistic dispute / encroachment count proportional to sector parcel size & urban density
+  let conflictRate = 0.0239; // Default: ~34 disputes for 1,420 parcels (Pune Urban)
+  if (sectorId === 'nagpur_sec3') {
+    conflictRate = 0.0184; // ~18 disputes for 980 parcels (Nagpur Peri-Urban)
+  } else if (sectorId === 'thane_sec8') {
+    conflictRate = 0.0289; // ~62 disputes for 2,150 parcels (Thane Metropolitan)
+  }
+
+  const numConflicts = Math.round(total * conflictRate);
   const step = Math.max(1, Math.floor(total / (numConflicts + 2)));
   const encroachmentIndices = new Set(
-    Array.from({ length: numConflicts }, (_, i) => Math.min(total - 2, (i + 1) * step + (i % 3) * 2))
+    Array.from({ length: numConflicts }, (_, i) => Math.min(total - 2, (i + 1) * step + ((i * 7) % 5)))
   );
 
   let parcelIdx = 0;
@@ -127,7 +134,9 @@ export function generateSectorData(sectorId = 'pune_ward14') {
         encroachmentType = parcelIdx % 2 === 0 
           ? "Stormwater Drainage Canal Encroachment" 
           : "Municipal Road Right-of-Way (RoW) Encroachment";
-        encroachedArea = +(12.5 + ((parcelIdx * 7) % 15) * 1.4).toFixed(1);
+        // Encroachment violation area scaled dynamically relative to parcel's surveyed size (6% - 15%)
+        const encroachmentRatio = 0.065 + ((parcelIdx % 8) * 0.012);
+        encroachedArea = +(surveyedArea * encroachmentRatio).toFixed(1);
         confidence = +(41.0 + (parcelIdx % 18)).toFixed(1);
         // Legal deed area is smaller than surveyed ground truth due to illegal buffer overlap
         legalArea = +(surveyedArea - encroachedArea).toFixed(1);

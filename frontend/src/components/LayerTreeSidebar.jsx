@@ -153,24 +153,7 @@ export default function LayerTreeSidebar({
             </label>
             
             <div className="space-y-2">
-              {/* Layer 1: Drone Orthomosaic */}
-              <div className="gis-glass-card rounded-lg p-2.5 flex items-center justify-between border border-surface-border">
-                <div className="flex items-center space-x-2.5">
-                  <span className="w-3 h-3 rounded-full bg-slate-600 border border-slate-400"></span>
-                  <div>
-                    <div className="text-xs font-medium text-slate-200">Drone ORI (5cm GSD)</div>
-                    <div className="text-[10px] text-slate-400">Ultra-HD Basemap</div>
-                  </div>
-                </div>
-                <button
-                  onClick={() => onToggleLayer('drone')}
-                  className="text-slate-400 hover:text-white"
-                >
-                  {layerVisibility.drone ? <Eye className="w-4 h-4 text-cyan-400" /> : <EyeOff className="w-4 h-4" />}
-                </button>
-              </div>
-
-              {/* Layer 2: Legacy Cadastre (Shajra Blue) */}
+              {/* Layer 1: Legacy Cadastre (Shajra Blue) */}
               <div className="gis-glass-card rounded-lg p-2.5 border border-surface-border">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-2.5">

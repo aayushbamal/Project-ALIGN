@@ -4,7 +4,7 @@ import {
   FileText, CheckCircle2, Sparkles, X
 } from 'lucide-react';
 
-export default function ExportDropdown({ isOpen, onClose, parcels, conflicts }) {
+export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, sectorInfo }) {
   const [downloadSuccess, setDownloadSuccess] = useState('');
 
   if (!isOpen) return null;
@@ -12,7 +12,7 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts }) 
   const handleExportGeoJson = () => {
     const featureCollection = {
       type: "FeatureCollection",
-      name: "Project_ALIGN_Harmonized_Cadastre_Ward14",
+      name: `Project_ALIGN_Harmonized_${sectorInfo?.district || 'Cadastre'}`,
       crs: {
         type: "name",
         properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" }
@@ -104,7 +104,7 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts }) 
 
         <div className="p-5 space-y-3">
           <p className="text-xs text-slate-400">
-            Export harmonized 1,420 cadastral boundaries, ULPIN identifiers, and audit metadata in national and open GIS formats:
+            Export harmonized {parcels.length.toLocaleString()} cadastral boundaries, ULPIN identifiers, and audit metadata in national and open GIS formats:
           </p>
 
           {downloadSuccess && (
@@ -126,7 +126,7 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts }) 
                 </div>
                 <div>
                   <div className="text-xs font-bold text-white">GeoJSON (Planar Harmonized)</div>
-                  <div className="text-[10px] text-slate-400">Standard RFC 7946 FeatureCollection with 1,420 polygons</div>
+                  <div className="text-[10px] text-slate-400">Standard RFC 7946 FeatureCollection with {parcels.length.toLocaleString()} polygons</div>
                 </div>
               </div>
               <Download className="w-4 h-4 text-slate-400 group-hover:text-emerald-400" />

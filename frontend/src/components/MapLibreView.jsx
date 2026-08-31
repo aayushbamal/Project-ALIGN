@@ -197,10 +197,10 @@ export default function MapLibreView({
   }, [infrastructure]);
 
   // Compute live KPIs
-  const totalCount = parcelsList?.length || 1420;
-  const approvedCount = parcelsList?.filter(p => p.status === 'Approved').length || 1318;
-  const harmonizedRate = ((approvedCount / Math.max(1, totalCount)) * 100).toFixed(1);
-  const conflictCount = parcelsList?.filter(p => p.is_encroaching || p.status === 'Encroachment').length || 28;
+  const totalCount = parcelsList?.length || 0;
+  const approvedCount = parcelsList?.filter(p => p.status === 'Approved').length || 0;
+  const harmonizedRate = totalCount > 0 ? ((approvedCount / totalCount) * 100).toFixed(1) : '0.0';
+  const conflictCount = parcelsList?.filter(p => p.is_encroaching || p.status === 'Encroachment').length || 0;
 
   // Declarative Style Object for Left Map (Legacy Distorted Cadastre)
   const createLeftMapStyle = useCallback((basemapKey) => {

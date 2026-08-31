@@ -46,7 +46,7 @@ export default function MetricRibbon({ metrics, isHarmonizing }) {
             <div className="text-[10px] font-mono uppercase tracking-wider text-rose-300">Active Conflicts</div>
             <div className="flex items-baseline space-x-1.5">
               <span className="text-base font-bold font-mono text-rose-400">
-                {metrics?.activeEncroachments || 28}
+                {metrics?.activeEncroachments ?? 0}
               </span>
               <span className="text-[10px] font-medium text-rose-300 font-mono">Drainage / RoW</span>
             </div>

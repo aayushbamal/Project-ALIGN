@@ -26,7 +26,6 @@ export default function App() {
 
   // Layer Visibility State
   const [layerVisibility, setLayerVisibility] = useState({
-    drone: true,
     legacy: true,
     aiWalls: true,
     drainage: true,
@@ -95,17 +94,21 @@ export default function App() {
   // Handler: Trigger GeoAI Re-Harmonization
   const handleTriggerHarmonize = () => {
     setIsHarmonizing(true);
-    setToastMessage('Running FastSAM boundary extraction & TPS elastic warp on satellite tiles...');
+    const wardName = data.sectorInfo?.name || 'Cadastral Sector';
+    const parcelCount = data.parcels?.length || 1420;
+    const executionTimeSec = +((parcelCount * 0.00028) + 0.12).toFixed(3);
+
+    setToastMessage(`Running FastSAM boundary extraction & TPS elastic warp on ${wardName}...`);
 
     setTimeout(() => {
       setIsHarmonizing(false);
-      setToastMessage('Harmonization complete! 1,420 parcels planarized in 0.412s');
+      setToastMessage(`Harmonization complete! ${parcelCount.toLocaleString()} parcels planarized across ${wardName} in ${executionTimeSec}s`);
       confetti({
         particleCount: 50,
         spread: 60,
         origin: { y: 0.2 }
       });
-      setTimeout(() => setToastMessage(''), 4000);
+      setTimeout(() => setToastMessage(''), 4500);
     }, 1200);
   };
 
@@ -174,8 +177,6 @@ export default function App() {
       {/* 1. Header Bar */}
       <Header
         onOpenIngest={() => setIsIngestOpen(true)}
-        onTriggerHarmonize={handleTriggerHarmonize}
-        isHarmonizing={isHarmonizing}
         onExport={() => setIsExportOpen(true)}
         selectedSector={selectedSector}
         onSelectSector={handleSelectSector}
@@ -252,6 +253,10 @@ export default function App() {
         isOpen={isIngestOpen}
         onClose={() => setIsIngestOpen(false)}
         onCompleteIngest={handleTriggerHarmonize}
+        sectorInfo={data.sectorInfo}
+        totalParcels={data.parcels.length}
+        conflictsCount={data.conflicts.length}
+        kpiMetrics={data.kpiMetrics}
       />
 
       {/* 6. Bhu-Aadhaar Digital Card Modal */}
@@ -274,6 +279,7 @@ export default function App() {
         onClose={() => setIsExportOpen(false)}
         parcels={data.parcels}
         conflicts={data.conflicts}
+        sectorInfo={data.sectorInfo}
       />
     </div>
   );

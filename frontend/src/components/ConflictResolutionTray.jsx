@@ -110,7 +110,7 @@ export default function ConflictResolutionTray({
                 onChange={(e) => setTypeFilter(e.target.value)}
                 className="bg-surface border border-surface-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-500 cursor-pointer"
               >
-                <option value="all">All Violations (28)</option>
+                <option value="all">All Violations ({conflicts.length})</option>
                 <option value="drainage">Stormwater Drainage Canals</option>
                 <option value="road">Road Right-of-Way (RoW)</option>
               </select>

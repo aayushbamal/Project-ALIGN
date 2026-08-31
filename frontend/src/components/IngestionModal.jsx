@@ -5,14 +5,25 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-export default function IngestionModal({ isOpen, onClose, onCompleteIngest }) {
+export default function IngestionModal({ 
+  isOpen, 
+  onClose, 
+  onCompleteIngest, 
+  sectorInfo, 
+  totalParcels = 1420, 
+  conflictsCount = 34, 
+  kpiMetrics 
+}) {
   const [stage, setStage] = useState('upload'); // 'upload', 'processing', 'done'
   const [activeStep, setActiveStep] = useState(0);
+  const wardName = sectorInfo?.name || 'Cadastral Sector';
+  const executionTimeSec = +((totalParcels * 0.00028) + 0.12).toFixed(3);
+
   const [uploadedFiles, setUploadedFiles] = useState({
-    drone: 'Pune_Ward14_5cm_ORI_Orthomosaic.tif (1.8 GB)',
-    legacy: 'Shajra_Cadastral_Vectors_1984.shp (14.2 MB)',
-    khasra: 'Pune_RoR_Khasra_Registry_2026.csv (2.4 MB)',
-    elevation: 'Ward14_LiDAR_DSM_DTM_Pointcloud.las (840 MB)'
+    drone: `${sectorInfo?.district || 'Sector'}_5cm_ORI_Orthomosaic.tif (1.8 GB)`,
+    legacy: `Shajra_Cadastral_Vectors_${sectorInfo?.district || 'Revenue'}.shp (14.2 MB)`,
+    khasra: `${sectorInfo?.district || 'State'}_RoR_Khasra_Registry_2026.csv (2.4 MB)`,
+    elevation: `${sectorInfo?.district || 'Sector'}_LiDAR_DSM_DTM_Pointcloud.las (840 MB)`
   });
 
   if (!isOpen) return null;
@@ -22,7 +33,7 @@ export default function IngestionModal({ isOpen, onClose, onCompleteIngest }) {
     { title: "2. Zero-Shot Physical Segmentation", desc: "SAM-2 boundary segmentation with automated nDSM eave contraction (0.4m)", time: "1.2s" },
     { title: "3. Topological Conflation & Planarization", desc: "Vertex snap-rounding (ε=15cm), sliver elimination (<2.0m²), 0 overlaps enforced", time: "0.6s" },
     { title: "4. Multilingual Semantic Attribute Linkage", desc: "IndicSoundex phonetic tokenization + Levenshtein distance across Devanagari records", time: "0.5s" },
-    { title: "5. Bhu-Aadhaar (ULPIN) Minting", desc: "Generating 1,420 ISO 19152 compliant 14-char ULPINs & cryptographic QR hashes", time: "0.4s" }
+    { title: "5. Bhu-Aadhaar (ULPIN) Minting", desc: `Generating ${totalParcels.toLocaleString()} ISO 19152 compliant 14-char ULPINs & cryptographic QR hashes`, time: "0.4s" }
   ];
 
   const handleStartProcessing = () => {
@@ -137,7 +148,7 @@ export default function IngestionModal({ isOpen, onClose, onCompleteIngest }) {
                   Executing 5-Stage Autonomous GeoAI Pipeline
                 </h4>
                 <p className="text-[11px] text-slate-400">
-                  Processing 1,420 cadastral parcels across Ward 14, Pune Urban Sector
+                  Processing {totalParcels.toLocaleString()} cadastral parcels across {wardName}
                 </p>
               </div>
 
@@ -190,25 +201,25 @@ export default function IngestionModal({ isOpen, onClose, onCompleteIngest }) {
 
               <div>
                 <h4 className="font-outfit text-base font-bold text-white">
-                  Cadastral Sector Successfully Harmonized!
+                  {wardName} Successfully Harmonized!
                 </h4>
                 <p className="text-xs text-slate-400 max-w-md mx-auto mt-1">
-                  1,420 parcels co-registered with millimeter-precision TPS warping. 28 encroachment disputes flagged with Section 248 legal notices ready.
+                  {totalParcels.toLocaleString()} parcels co-registered with millimeter-precision TPS warping. {conflictsCount} encroachment disputes flagged with Section 248 legal notices ready.
                 </p>
               </div>
 
               <div className="grid grid-cols-3 gap-3 p-3 bg-surface-raised rounded-xl border border-surface-border max-w-lg mx-auto text-center font-mono">
                 <div>
                   <div className="text-[10px] text-slate-400">Total Parcels</div>
-                  <div className="text-sm font-bold text-white">1,420</div>
+                  <div className="text-sm font-bold text-white">{totalParcels.toLocaleString()}</div>
                 </div>
                 <div>
                   <div className="text-[10px] text-slate-400">Execution Time</div>
-                  <div className="text-sm font-bold text-emerald-400">0.412 s</div>
+                  <div className="text-sm font-bold text-emerald-400">{executionTimeSec} s</div>
                 </div>
                 <div>
                   <div className="text-[10px] text-slate-400">Mean Confidence</div>
-                  <div className="text-sm font-bold text-cyan-400">94.8%</div>
+                  <div className="text-sm font-bold text-cyan-400">{kpiMetrics?.avgConfidencePct || 94.8}%</div>
                 </div>
               </div>
 

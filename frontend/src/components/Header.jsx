@@ -3,8 +3,6 @@ import { Layers, Upload, Download, Sparkles, ShieldCheck, MapPin, Database, Chec
 
 export default function Header({ 
   onOpenIngest, 
-  onTriggerHarmonize, 
-  isHarmonizing, 
   onExport,
   selectedSector,
   onSelectSector 
@@ -63,19 +61,6 @@ export default function Header({
         >
           <Upload className="w-3.5 h-3.5 text-cyan-400" />
           <span>Ingest Data</span>
-        </button>
-
-        <button
-          onClick={onTriggerHarmonize}
-          disabled={isHarmonizing}
-          className={`flex items-center space-x-2 text-xs font-semibold px-4 py-2 rounded-lg transition-all shadow-lg ${
-            isHarmonizing 
-              ? 'bg-cyan-600/50 text-cyan-200 cursor-not-allowed'
-              : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-emerald-500/25 hover:shadow-emerald-500/40 active:scale-95'
-          }`}
-        >
-          <Sparkles className={`w-3.5 h-3.5 ${isHarmonizing ? 'animate-spin' : ''}`} />
-          <span>{isHarmonizing ? 'Running GeoAI Pipeline...' : 'Re-Harmonize (FastSAM)'}</span>
         </button>
 
         <button
