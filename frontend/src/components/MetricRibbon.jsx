@@ -1,13 +1,13 @@
 import React from 'react';
-import { CheckCircle2, AlertTriangle, ShieldCheck, Cpu, Compass, Activity } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, ShieldCheck, Cpu, Compass } from 'lucide-react';
 
 export default function MetricRibbon({ metrics, isHarmonizing }) {
   return (
-    <div className="bg-surface/80 border-b border-surface-border px-5 py-2.5 flex items-center justify-between gap-4 overflow-x-auto select-none">
+    <div className="bg-surface/90 border-b border-surface-border px-5 py-2.5 flex items-center justify-between gap-4 overflow-x-auto select-none backdrop-blur-md">
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 w-full max-w-7xl mx-auto">
         {/* KPI 1: Total Parcels */}
-        <div className="gis-glass-card rounded-lg p-2.5 flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+        <div className="gis-glass-card rounded-xl p-2.5 flex items-center space-x-3 border border-slate-700/40">
+          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
             <Cpu className="w-4 h-4" />
           </div>
           <div>
@@ -16,14 +16,14 @@ export default function MetricRibbon({ metrics, isHarmonizing }) {
               <span className="text-base font-bold font-mono text-white">
                 {metrics?.totalParcels?.toLocaleString() || '1,420'}
               </span>
-              <span className="text-[10px] font-medium text-emerald-400 font-mono">100% Indexed</span>
+              <span className="text-[9px] font-semibold text-emerald-400 font-mono px-1.5 py-0.2 rounded bg-emerald-500/10">100% Indexed</span>
             </div>
           </div>
         </div>
 
         {/* KPI 2: Harmonization Rate */}
-        <div className="gis-glass-card rounded-lg p-2.5 flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+        <div className="gis-glass-card rounded-xl p-2.5 flex items-center space-x-3 border border-emerald-500/20">
+          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400">
             <CheckCircle2 className="w-4 h-4" />
           </div>
           <div>
@@ -38,8 +38,8 @@ export default function MetricRibbon({ metrics, isHarmonizing }) {
         </div>
 
         {/* KPI 3: Active Encroachments */}
-        <div className="gis-glass-card rounded-lg p-2.5 flex items-center space-x-3 border-rose-500/30 bg-rose-950/20">
-          <div className="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 animate-pulse">
+        <div className="gis-glass-card rounded-xl p-2.5 flex items-center space-x-3 border-rose-500/30 bg-rose-950/20">
+          <div className="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 animate-pulse">
             <AlertTriangle className="w-4 h-4" />
           </div>
           <div>
@@ -54,30 +54,30 @@ export default function MetricRibbon({ metrics, isHarmonizing }) {
         </div>
 
         {/* KPI 4: Avg AI Confidence */}
-        <div className="gis-glass-card rounded-lg p-2.5 flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+        <div className="gis-glass-card rounded-xl p-2.5 flex items-center space-x-3 border border-teal-500/20">
+          <div className="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
             <ShieldCheck className="w-4 h-4" />
           </div>
           <div>
             <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">Mean AI Confidence</div>
             <div className="flex items-baseline space-x-1.5">
-              <span className="text-base font-bold font-mono text-cyan-400">
+              <span className="text-base font-bold font-mono text-teal-300">
                 {metrics?.avgConfidencePct || 94.8}%
               </span>
-              <span className="text-[10px] font-medium text-cyan-300/70 font-mono">SAM-2 + Soundex</span>
+              <span className="text-[10px] font-medium text-slate-400 font-mono">SAM-2 + Soundex</span>
             </div>
           </div>
         </div>
 
         {/* KPI 5: TPS Warping Precision */}
-        <div className="gis-glass-card rounded-lg p-2.5 flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+        <div className="gis-glass-card rounded-xl p-2.5 flex items-center space-x-3 border border-amber-500/20">
+          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
             <Compass className="w-4 h-4" />
           </div>
           <div>
             <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">TPS Warp Precision</div>
             <div className="flex items-baseline space-x-1.5">
-              <span className="text-base font-bold font-mono text-amber-400">
+              <span className="text-base font-bold font-mono text-amber-300">
                 {metrics?.tpsWarpRmseCm || 4.2} cm
               </span>
               <span className="text-[10px] font-medium text-slate-400 font-mono">64 Tie-Points</span>

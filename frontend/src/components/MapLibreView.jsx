@@ -731,33 +731,33 @@ export default function MapLibreView({
         className="absolute top-0 bottom-0 w-10 -ml-5 z-30 flex items-center justify-center cursor-ew-resize group"
       >
         {/* Glow Line */}
-        <div className="absolute top-0 bottom-0 w-0.5 bg-gradient-to-b from-cyan-400 via-emerald-400 to-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.8)]"></div>
+        <div className="absolute top-0 bottom-0 w-0.5 bg-gradient-to-b from-indigo-500 via-emerald-400 to-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.6)]"></div>
 
         {/* Center Circular Handle */}
-        <div className="w-9 h-9 rounded-full bg-white dark:bg-slate-900 border-2 border-cyan-400 shadow-xl shadow-cyan-500/40 flex items-center justify-center group-hover:scale-110 transition-transform">
-          <Sliders className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
+        <div className="w-8 h-8 rounded-full bg-slate-900 border-2 border-indigo-400 shadow-xl shadow-black/50 flex items-center justify-center group-hover:scale-110 group-hover:border-emerald-400 transition-all">
+          <Sliders className="w-3.5 h-3.5 text-indigo-300 group-hover:text-emerald-300" />
         </div>
       </div>
 
       {/* 4. Floating Header Pill: Live KPIs (Top Center) */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
-        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200 dark:border-slate-800 shadow-xl flex items-center space-x-3 text-xs font-mono font-semibold text-slate-800 dark:text-slate-200">
+        <div className="bg-slate-900/95 backdrop-blur-md px-4 py-2 rounded-full border border-slate-700/60 shadow-2xl flex items-center space-x-3 text-xs font-mono font-semibold text-slate-200">
           <div className="flex items-center space-x-1.5">
-            <span className="text-cyan-500 font-bold">📍 {sectorInfo?.name || 'Ward 14, Pune'}</span>
-            <span className="text-slate-400">|</span>
-            <span>{totalCount.toLocaleString()} Parcels</span>
+            <span className="text-indigo-400 font-bold">📍 {sectorInfo?.name || 'Ward 14, Pune'}</span>
+            <span className="text-slate-600">|</span>
+            <span className="text-white">{totalCount.toLocaleString()} Parcels</span>
           </div>
 
-          <span className="text-slate-300 dark:text-slate-700">|</span>
+          <span className="text-slate-700">|</span>
 
-          <div className="flex items-center space-x-1 text-emerald-600 dark:text-emerald-400">
+          <div className="flex items-center space-x-1 text-emerald-400">
             <CheckCircle2 className="w-3.5 h-3.5" />
             <span>{harmonizedRate}% Harmonized</span>
           </div>
 
-          <span className="text-slate-300 dark:text-slate-700">|</span>
+          <span className="text-slate-700">|</span>
 
-          <div className="flex items-center space-x-1 text-rose-600 dark:text-rose-400">
+          <div className="flex items-center space-x-1 text-rose-400">
             <AlertTriangle className="w-3.5 h-3.5 animate-pulse" />
             <span>{conflictCount} Encroachments Flagged</span>
           </div>
@@ -766,14 +766,14 @@ export default function MapLibreView({
 
       {/* Floating Split Mode Badges */}
       <div className="absolute top-4 left-4 z-20 pointer-events-none">
-        <div className="bg-blue-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-blue-400/50 text-blue-200 font-mono text-xs font-bold shadow-lg flex items-center space-x-1.5">
-          <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+        <div className="bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-blue-500/30 text-blue-300 font-mono text-xs font-bold shadow-xl flex items-center space-x-1.5">
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
           <span>LEGACY DISTORTED (Shajra)</span>
         </div>
       </div>
 
       <div className="absolute top-4 right-4 z-20 pointer-events-none">
-        <div className="bg-emerald-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-emerald-400/50 text-emerald-200 font-mono text-xs font-bold shadow-lg flex items-center space-x-1.5">
+        <div className="bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/30 text-emerald-300 font-mono text-xs font-bold shadow-xl flex items-center space-x-1.5">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span>AI HARMONIZED (SAM-2 + nDSM)</span>
         </div>
@@ -782,12 +782,12 @@ export default function MapLibreView({
       {/* 5. Floating Controls: Basemap & 3D Extrusion (Bottom-Left) */}
       <div className="absolute bottom-6 left-6 z-20 flex items-center space-x-2">
         {/* Basemap Switcher */}
-        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center space-x-1">
+        <div className="bg-slate-900/95 backdrop-blur-md p-1 rounded-xl border border-slate-700/60 shadow-xl flex items-center space-x-1">
           <button
             onClick={() => handleChangeBasemap('satellite')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeBasemap === 'satellite'
-                ? 'bg-cyan-600 text-white shadow-md'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${activeBasemap === 'satellite'
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'text-slate-300 hover:bg-slate-800'
               }`}
           >
             <Satellite className="w-3.5 h-3.5" />
@@ -796,9 +796,9 @@ export default function MapLibreView({
 
           <button
             onClick={() => handleChangeBasemap('streets')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeBasemap === 'streets'
-                ? 'bg-cyan-600 text-white shadow-md'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${activeBasemap === 'streets'
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'text-slate-300 hover:bg-slate-800'
               }`}
           >
             <MapIcon className="w-3.5 h-3.5" />
@@ -807,9 +807,9 @@ export default function MapLibreView({
 
           <button
             onClick={() => handleChangeBasemap('voyager')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeBasemap === 'voyager'
-                ? 'bg-cyan-600 text-white shadow-md'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${activeBasemap === 'voyager'
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'text-slate-300 hover:bg-slate-800'
               }`}
           >
             <Compass className="w-3.5 h-3.5" />
@@ -818,9 +818,9 @@ export default function MapLibreView({
 
           <button
             onClick={() => handleChangeBasemap('dark')}
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activeBasemap === 'dark'
-                ? 'bg-cyan-600 text-white shadow-md'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${activeBasemap === 'dark'
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'text-slate-300 hover:bg-slate-800'
               }`}
           >
             <Moon className="w-3.5 h-3.5" />
@@ -831,37 +831,37 @@ export default function MapLibreView({
         {/* 2D / 3D Digital Twin Extrusion Toggle */}
         <button
           onClick={() => onChangeViewMode(viewMode === '2d' ? '3d' : '2d')}
-          className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold shadow-xl border backdrop-blur-md transition-all ${viewMode === '3d'
-              ? 'bg-emerald-600 text-white border-emerald-500 shadow-emerald-500/20'
-              : 'bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:bg-slate-100'
+          className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold shadow-xl border backdrop-blur-md transition-all active:scale-95 ${viewMode === '3d'
+              ? 'bg-emerald-600 text-white border-emerald-500 shadow-emerald-600/25'
+              : 'bg-slate-900/95 text-slate-200 border-slate-700/60 hover:bg-slate-800'
             }`}
         >
-          <Box className="w-4 h-4 text-cyan-400" />
+          <Box className="w-4 h-4 text-emerald-400" />
           <span>{viewMode === '3d' ? '3D Digital Twin (Active)' : 'Enable 3D Extrusion'}</span>
         </button>
       </div>
 
       {/* 6. Map Zoom & Reset Navigation Toolbar (Bottom-Right) */}
       <div className="absolute bottom-6 right-6 z-20 flex flex-col space-y-1.5">
-        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-1.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl flex flex-col space-y-1">
+        <div className="bg-slate-900/95 backdrop-blur-md p-1.5 rounded-xl border border-slate-700/60 shadow-xl flex flex-col space-y-1">
           <button
             onClick={() => handleZoom(0.5)}
-            className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-cyan-500 hover:text-white text-slate-700 dark:text-slate-200 flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-indigo-600 hover:text-white text-slate-200 flex items-center justify-center transition-colors"
             title="Zoom In"
           >
             <Plus className="w-4 h-4" />
           </button>
           <button
             onClick={() => handleZoom(-0.5)}
-            className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-cyan-500 hover:text-white text-slate-700 dark:text-slate-200 flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-indigo-600 hover:text-white text-slate-200 flex items-center justify-center transition-colors"
             title="Zoom Out"
           >
             <Minus className="w-4 h-4" />
           </button>
-          <div className="h-px bg-slate-200 dark:bg-slate-800 my-0.5"></div>
+          <div className="h-px bg-slate-700/60 my-0.5"></div>
           <button
             onClick={handleResetView}
-            className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-cyan-500 hover:text-white text-slate-700 dark:text-slate-200 flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-indigo-600 hover:text-white text-slate-200 flex items-center justify-center transition-colors"
             title="Reset Map View"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -876,18 +876,18 @@ export default function MapLibreView({
             left: `${hoveredInfo.x + 15}px`,
             top: `${hoveredInfo.y + 15}px`
           }}
-          className="absolute z-40 pointer-events-none bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl text-xs min-w-[200px] animate-in fade-in zoom-in-95 duration-100"
+          className="absolute z-40 pointer-events-none bg-slate-900/95 backdrop-blur-md p-3 rounded-xl border border-slate-700/70 shadow-2xl text-xs min-w-[200px] animate-in fade-in zoom-in-95 duration-100"
         >
-          <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-200 dark:border-slate-800">
-            <span className="font-mono font-bold text-slate-900 dark:text-white">
+          <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-800">
+            <span className="font-mono font-bold text-white">
               {hoveredInfo.props.khasra_no}
             </span>
             <span
               className={`px-1.5 py-0.5 rounded font-mono text-[9px] font-bold ${hoveredInfo.props.status === 'Encroachment'
-                  ? 'bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30'
+                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                   : hoveredInfo.props.status === 'Review'
-                    ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30'
-                    : 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                    : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                 }`}
             >
               {hoveredInfo.props.status_chip || hoveredInfo.props.status}
@@ -895,18 +895,18 @@ export default function MapLibreView({
           </div>
 
           <div className="space-y-1 text-[11px]">
-            <div className="font-medium text-slate-800 dark:text-slate-200">
+            <div className="font-semibold text-slate-200">
               {hoveredInfo.props.owner_en}
             </div>
-            <div className="text-slate-500 font-mono text-[10px]">
+            <div className="text-slate-400 font-mono text-[10px]">
               {hoveredInfo.props.ulpin}
             </div>
-            <div className="flex justify-between text-slate-600 dark:text-slate-400 text-[10px] pt-1 border-t border-slate-200 dark:border-slate-800/50">
-              <span>Surveyed: <b>{hoveredInfo.props.surveyed_area_sqm} m²</b></span>
-              <span>AI Conf: <b className="text-cyan-500">{hoveredInfo.props.confidence_score}%</b></span>
+            <div className="flex justify-between text-slate-400 text-[10px] pt-1 border-t border-slate-800">
+              <span>Surveyed: <b className="text-slate-200">{hoveredInfo.props.surveyed_area_sqm} m²</b></span>
+              <span>AI Conf: <b className="text-emerald-400">{hoveredInfo.props.confidence_score}%</b></span>
             </div>
             {hoveredInfo.props.is_encroaching && (
-              <div className="mt-1.5 p-1 rounded bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-500/40 text-[10px] text-rose-600 dark:text-rose-300 font-medium">
+              <div className="mt-1.5 p-1.5 rounded-lg bg-rose-950/60 border border-rose-500/40 text-[10px] text-rose-300 font-medium">
                 ⚠️ {hoveredInfo.props.encroachment_type} (+{hoveredInfo.props.encroached_area_sqm} m²)
               </div>
             )}

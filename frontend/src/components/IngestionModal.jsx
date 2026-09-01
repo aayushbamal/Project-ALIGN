@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   X, Upload, FileText, CheckCircle2, Cpu, Sparkles, 
   Layers, Database, ArrowRight, ShieldCheck, Check,
-  Zap, FolderOpen, ClipboardList, MapPin, RefreshCw, FileCode
+  Zap, FolderOpen, ClipboardList, MapPin, RefreshCw
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -174,11 +174,11 @@ export default function IngestionModal({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 select-none animate-in fade-in duration-200">
-      <div className="bg-surface border border-surface-border rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col">
+      <div className="bg-slate-900 border border-slate-700/70 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col">
         {/* Modal Header */}
-        <div className="p-4 border-b border-surface-border flex items-center justify-between bg-surface-raised">
+        <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
           <div className="flex items-center space-x-2.5">
-            <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+            <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
               <Upload className="w-5 h-5" />
             </div>
             <div>
@@ -195,7 +195,7 @@ export default function IngestionModal({
           </div>
           <button 
             onClick={onClose} 
-            className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+            className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -206,12 +206,12 @@ export default function IngestionModal({
           {stage === 'upload' && (
             <div className="space-y-4">
               {/* Tab Navigation */}
-              <div className="flex items-center space-x-1 p-1 bg-surface-raised rounded-xl border border-surface-border">
+              <div className="flex items-center space-x-1 p-1 bg-slate-800/50 rounded-xl border border-slate-700/50">
                 <button
                   onClick={() => setTab('presets')}
                   className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all ${
                     tab === 'presets'
-                      ? 'bg-cyan-600 text-white shadow-md'
+                      ? 'bg-indigo-600 text-white shadow-md'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
                   }`}
                 >
@@ -223,7 +223,7 @@ export default function IngestionModal({
                   onClick={() => setTab('upload')}
                   className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all ${
                     tab === 'upload'
-                      ? 'bg-cyan-600 text-white shadow-md'
+                      ? 'bg-indigo-600 text-white shadow-md'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
                   }`}
                 >
@@ -235,7 +235,7 @@ export default function IngestionModal({
                   onClick={() => setTab('paste')}
                   className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center space-x-1.5 transition-all ${
                     tab === 'paste'
-                      ? 'bg-cyan-600 text-white shadow-md'
+                      ? 'bg-indigo-600 text-white shadow-md'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
                   }`}
                 >
@@ -260,19 +260,19 @@ export default function IngestionModal({
                           onClick={() => handleSelectPresetCard(preset.id)}
                           className={`cursor-pointer rounded-xl p-3 border transition-all relative ${
                             isSelected
-                              ? 'bg-cyan-950/40 border-cyan-400 shadow-lg shadow-cyan-500/10'
-                              : 'bg-surface-raised/60 border-surface-border hover:border-slate-600 hover:bg-surface-raised'
+                              ? 'bg-indigo-950/40 border-indigo-400 shadow-lg shadow-indigo-500/10 ring-1 ring-indigo-400/30'
+                              : 'bg-slate-800/40 border-slate-700/60 hover:border-slate-600 hover:bg-slate-800/70'
                           }`}
                         >
                           {isSelected && (
-                            <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-cyan-400 text-slate-950 flex items-center justify-center text-[10px] font-bold">
+                            <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-indigo-500 text-white flex items-center justify-center text-[10px] font-bold shadow">
                               ✓
                             </div>
                           )}
                           <div className="text-xl mb-1">{preset.icon}</div>
                           <div className="text-xs font-bold text-white truncate">{preset.name}</div>
-                          <div className="text-[10px] text-cyan-300 font-mono mt-0.5">{preset.density}</div>
-                          <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mt-2 pt-1.5 border-t border-surface-border/50">
+                          <div className="text-[10px] text-indigo-300 font-mono mt-0.5">{preset.density}</div>
+                          <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mt-2 pt-1.5 border-t border-slate-700/50">
                             <span>{preset.parcels.toLocaleString()} Parcels</span>
                             <span className="text-rose-400">{preset.conflicts} Disputes</span>
                           </div>
@@ -282,13 +282,13 @@ export default function IngestionModal({
                   </div>
 
                   {/* Summary of Active Preset Files */}
-                  <div className="p-3 bg-surface-raised/40 rounded-xl border border-surface-border space-y-1.5">
+                  <div className="p-3 bg-slate-800/30 rounded-xl border border-slate-700/50 space-y-1.5">
                     <div className="text-[10px] font-mono uppercase text-slate-400 font-semibold flex items-center justify-between">
                       <span>Loaded Channels for {currentSectorObj.name}</span>
                       <span className="text-emerald-400">● 4/4 Verified</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-[10px] font-mono">
-                      <div className="flex items-center space-x-1.5 text-cyan-300 truncate">
+                      <div className="flex items-center space-x-1.5 text-indigo-300 truncate">
                         <Layers className="w-3 h-3 shrink-0" />
                         <span className="truncate">{currentSectorObj.files.drone}</span>
                       </div>
@@ -314,22 +314,22 @@ export default function IngestionModal({
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-2.5">
                     {/* Drone File */}
-                    <div className="p-2.5 rounded-xl bg-surface-raised/60 border border-cyan-500/30 flex items-center justify-between">
+                    <div className="p-2.5 rounded-xl bg-slate-800/40 border border-indigo-500/20 flex items-center justify-between">
                       <div className="flex items-center space-x-2 truncate">
-                        <Layers className="w-4 h-4 text-cyan-400 shrink-0" />
+                        <Layers className="w-4 h-4 text-indigo-400 shrink-0" />
                         <div className="truncate">
                           <div className="text-[11px] font-semibold text-white">Drone Orthomosaic (5cm)</div>
-                          <div className="text-[9px] text-cyan-300 font-mono truncate">{customFiles.drone}</div>
+                          <div className="text-[9px] text-indigo-300 font-mono truncate">{customFiles.drone}</div>
                         </div>
                       </div>
-                      <label className="cursor-pointer px-2 py-1 bg-surface hover:bg-slate-700 text-cyan-400 rounded text-[10px] font-medium border border-surface-border shrink-0">
+                      <label className="cursor-pointer px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-lg text-[10px] font-medium border border-slate-700 shrink-0">
                         Browse
                         <input type="file" accept=".tif,.tiff,.cog" className="hidden" onChange={(e) => handleFileUpload('drone', e)} />
                       </label>
                     </div>
 
                     {/* Legacy Shajra File */}
-                    <div className="p-2.5 rounded-xl bg-surface-raised/60 border border-blue-500/30 flex items-center justify-between">
+                    <div className="p-2.5 rounded-xl bg-slate-800/40 border border-blue-500/20 flex items-center justify-between">
                       <div className="flex items-center space-x-2 truncate">
                         <FileText className="w-4 h-4 text-blue-400 shrink-0" />
                         <div className="truncate">
@@ -337,14 +337,14 @@ export default function IngestionModal({
                           <div className="text-[9px] text-blue-300 font-mono truncate">{customFiles.legacy}</div>
                         </div>
                       </div>
-                      <label className="cursor-pointer px-2 py-1 bg-surface hover:bg-slate-700 text-blue-400 rounded text-[10px] font-medium border border-surface-border shrink-0">
+                      <label className="cursor-pointer px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-blue-300 rounded-lg text-[10px] font-medium border border-slate-700 shrink-0">
                         Browse
                         <input type="file" accept=".shp,.geojson,.json,.dxf" className="hidden" onChange={(e) => handleFileUpload('legacy', e)} />
                       </label>
                     </div>
 
                     {/* Khasra CSV */}
-                    <div className="p-2.5 rounded-xl bg-surface-raised/60 border border-emerald-500/30 flex items-center justify-between">
+                    <div className="p-2.5 rounded-xl bg-slate-800/40 border border-emerald-500/20 flex items-center justify-between">
                       <div className="flex items-center space-x-2 truncate">
                         <Database className="w-4 h-4 text-emerald-400 shrink-0" />
                         <div className="truncate">
@@ -352,14 +352,14 @@ export default function IngestionModal({
                           <div className="text-[9px] text-emerald-300 font-mono truncate">{customFiles.khasra}</div>
                         </div>
                       </div>
-                      <label className="cursor-pointer px-2 py-1 bg-surface hover:bg-slate-700 text-emerald-400 rounded text-[10px] font-medium border border-surface-border shrink-0">
+                      <label className="cursor-pointer px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-emerald-300 rounded-lg text-[10px] font-medium border border-slate-700 shrink-0">
                         Browse
                         <input type="file" accept=".csv,.xlsx,.tsv" className="hidden" onChange={(e) => handleFileUpload('khasra', e)} />
                       </label>
                     </div>
 
                     {/* Elevation Surface Model */}
-                    <div className="p-2.5 rounded-xl bg-surface-raised/60 border border-amber-500/30 flex items-center justify-between">
+                    <div className="p-2.5 rounded-xl bg-slate-800/40 border border-amber-500/20 flex items-center justify-between">
                       <div className="flex items-center space-x-2 truncate">
                         <Cpu className="w-4 h-4 text-amber-400 shrink-0" />
                         <div className="truncate">
@@ -367,14 +367,14 @@ export default function IngestionModal({
                           <div className="text-[9px] text-amber-300 font-mono truncate">{customFiles.elevation}</div>
                         </div>
                       </div>
-                      <label className="cursor-pointer px-2 py-1 bg-surface hover:bg-slate-700 text-amber-400 rounded text-[10px] font-medium border border-surface-border shrink-0">
+                      <label className="cursor-pointer px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-lg text-[10px] font-medium border border-slate-700 shrink-0">
                         Browse
                         <input type="file" accept=".las,.laz,.tif" className="hidden" onChange={(e) => handleFileUpload('elevation', e)} />
                       </label>
                     </div>
                   </div>
 
-                  <div className="border border-dashed border-slate-600 hover:border-cyan-400 rounded-xl p-4 text-center cursor-pointer bg-surface-raised/30 transition-colors">
+                  <div className="border border-dashed border-slate-700 hover:border-indigo-400 rounded-xl p-4 text-center cursor-pointer bg-slate-800/20 transition-colors">
                     <Upload className="w-5 h-5 text-slate-400 mx-auto mb-1" />
                     <div className="text-xs text-slate-300 font-medium">Or drag & drop any spatial package (.zip, .shp, .geojson, .tif) here</div>
                     <div className="text-[10px] text-slate-500 mt-0.5">Supports automated multi-layer package extraction</div>
@@ -389,16 +389,16 @@ export default function IngestionModal({
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => setPasteType('geojson')}
-                        className={`text-xs px-2.5 py-1 rounded font-medium ${
-                          pasteType === 'geojson' ? 'bg-cyan-600 text-white' : 'bg-surface-raised text-slate-400'
+                        className={`text-xs px-2.5 py-1 rounded-lg font-semibold ${
+                          pasteType === 'geojson' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'
                         }`}
                       >
                         GeoJSON
                       </button>
                       <button
                         onClick={() => setPasteType('csv')}
-                        className={`text-xs px-2.5 py-1 rounded font-medium ${
-                          pasteType === 'csv' ? 'bg-cyan-600 text-white' : 'bg-surface-raised text-slate-400'
+                        className={`text-xs px-2.5 py-1 rounded-lg font-semibold ${
+                          pasteType === 'csv' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400'
                         }`}
                       >
                         Khasra CSV
@@ -406,7 +406,7 @@ export default function IngestionModal({
                     </div>
                     <button
                       onClick={handleLoadSamplePaste}
-                      className="text-[11px] text-cyan-400 hover:text-cyan-300 font-medium flex items-center space-x-1"
+                      className="text-[11px] text-indigo-400 hover:text-indigo-300 font-semibold flex items-center space-x-1"
                     >
                       <RefreshCw className="w-3 h-3" />
                       <span>Insert Sample Template</span>
@@ -418,15 +418,15 @@ export default function IngestionModal({
                     placeholder={pasteType === 'geojson' ? 'Paste raw GeoJSON FeatureCollection here...' : 'Paste Khasra CSV lines here (khasra_no,owner_name,area)...'}
                     value={pastedData}
                     onChange={(e) => setPastedData(e.target.value)}
-                    className="w-full bg-surface-raised border border-surface-border rounded-xl p-3 text-xs font-mono text-cyan-300 placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+                    className="w-full bg-slate-800/50 border border-slate-700/60 rounded-xl p-3 text-xs font-mono text-indigo-200 placeholder-slate-500 focus:outline-none focus:border-indigo-400"
                   />
                 </div>
               )}
 
               {/* Bottom Execution Bar */}
-              <div className="flex items-center justify-between pt-3 border-t border-surface-border">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-800">
                 <div className="flex items-center space-x-2">
-                  <MapPin className="w-4 h-4 text-cyan-400" />
+                  <MapPin className="w-4 h-4 text-indigo-400" />
                   <span className="text-xs font-mono text-slate-300 font-semibold">
                     {wardName} <span className="text-slate-500 font-normal">({activeParcelsCount.toLocaleString()} Parcels)</span>
                   </span>
@@ -434,7 +434,7 @@ export default function IngestionModal({
 
                 <button
                   onClick={handleStartProcessing}
-                  className="flex items-center space-x-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 active:scale-95 transition-all"
+                  className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/25 active:scale-95 transition-all"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>Execute GeoAI Harmonization Pipeline</span>
@@ -446,7 +446,7 @@ export default function IngestionModal({
           {stage === 'processing' && (
             <div className="space-y-4">
               <div className="text-center py-2">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 mb-2 animate-bounce">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 mb-2 animate-bounce">
                   <Sparkles className="w-6 h-6 animate-spin" />
                 </div>
                 <h4 className="font-outfit text-sm font-bold text-white">
@@ -458,7 +458,7 @@ export default function IngestionModal({
               </div>
 
               {/* Stepper Progress */}
-              <div className="space-y-2.5 bg-surface-raised p-3.5 rounded-xl border border-surface-border">
+              <div className="space-y-2.5 bg-slate-800/40 p-3.5 rounded-xl border border-slate-700/50">
                 {pipelineSteps.map((step, idx) => {
                   const isDone = idx < activeStep;
                   const isCurrent = idx === activeStep;
@@ -466,7 +466,7 @@ export default function IngestionModal({
                     <div 
                       key={idx} 
                       className={`flex items-start space-x-3 p-2 rounded-lg transition-all ${
-                        isCurrent ? 'bg-cyan-950/40 border border-cyan-500/40' : 'opacity-70'
+                        isCurrent ? 'bg-indigo-950/40 border border-indigo-500/30' : 'opacity-70'
                       }`}
                     >
                       <div className="mt-0.5">
@@ -475,7 +475,7 @@ export default function IngestionModal({
                             ✓
                           </div>
                         ) : isCurrent ? (
-                          <div className="w-5 h-5 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin"></div>
+                          <div className="w-5 h-5 rounded-full border-2 border-indigo-400 border-t-transparent animate-spin"></div>
                         ) : (
                           <div className="w-5 h-5 rounded-full bg-slate-700 text-slate-400 flex items-center justify-center text-[10px] font-mono">
                             {idx + 1}
@@ -484,7 +484,7 @@ export default function IngestionModal({
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
-                          <span className={`text-xs font-bold ${isCurrent ? 'text-cyan-300' : isDone ? 'text-emerald-400' : 'text-slate-300'}`}>
+                          <span className={`text-xs font-bold ${isCurrent ? 'text-indigo-300' : isDone ? 'text-emerald-400' : 'text-slate-300'}`}>
                             {step.title}
                           </span>
                           <span className="text-[10px] font-mono text-slate-400">{step.time}</span>
@@ -500,7 +500,7 @@ export default function IngestionModal({
 
           {stage === 'done' && (
             <div className="text-center py-4 space-y-4">
-              <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 mx-auto flex items-center justify-center">
+              <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mx-auto flex items-center justify-center">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
 
@@ -513,7 +513,7 @@ export default function IngestionModal({
                 </p>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 p-3 bg-surface-raised rounded-xl border border-surface-border max-w-lg mx-auto text-center font-mono">
+              <div className="grid grid-cols-3 gap-3 p-3 bg-slate-800/40 rounded-xl border border-slate-700/50 max-w-lg mx-auto text-center font-mono">
                 <div>
                   <div className="text-[10px] text-slate-400">Total Parcels</div>
                   <div className="text-sm font-bold text-white">{activeParcelsCount.toLocaleString()}</div>
@@ -524,13 +524,13 @@ export default function IngestionModal({
                 </div>
                 <div>
                   <div className="text-[10px] text-slate-400">Mean Confidence</div>
-                  <div className="text-sm font-bold text-cyan-400">{kpiMetrics?.avgConfidencePct || 94.8}%</div>
+                  <div className="text-sm font-bold text-indigo-300">{kpiMetrics?.avgConfidencePct || 94.8}%</div>
                 </div>
               </div>
 
               <button
                 onClick={handleFinish}
-                className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/30 transition-all active:scale-95"
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/25 transition-all active:scale-95"
               >
                 Launch Harmonized Split-Screen Canvas
               </button>

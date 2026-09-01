@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Download, FileCode, Layers, Database, FileSpreadsheet, 
-  FileText, CheckCircle2, Sparkles, X
+  CheckCircle2, X
 } from 'lucide-react';
 
 export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, sectorInfo }) {
@@ -9,10 +9,12 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, se
 
   if (!isOpen) return null;
 
+  const districtName = sectorInfo?.district || 'Sector';
+
   const handleExportGeoJson = () => {
     const featureCollection = {
       type: "FeatureCollection",
-      name: `Project_ALIGN_Harmonized_${sectorInfo?.district || 'Cadastre'}`,
+      name: `Project_ALIGN_Harmonized_${districtName}`,
       crs: {
         type: "name",
         properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" }
@@ -45,7 +47,7 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, se
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(featureCollection, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `Project_ALIGN_Harmonized_Cadastre_Ward14.geojson`);
+    downloadAnchor.setAttribute("download", `Project_ALIGN_Harmonized_Cadastre_${districtName}.geojson`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -63,7 +65,7 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, se
     const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
     const link = document.createElement("a");
     link.setAttribute("href", encodeURI(csvContent));
-    link.setAttribute("download", `Project_ALIGN_Cadastral_Master_Register_Ward14.csv`);
+    link.setAttribute("download", `Project_ALIGN_Cadastral_Master_Register_${districtName}.csv`);
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -73,12 +75,11 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, se
   };
 
   const handleSimulateSpatialExport = (formatName) => {
-    // For standard OGC GeoPackage or ESRI Shapefile simulation
-    const dummyBlob = new Blob([`# Project A.L.I.G.N. Cadastral Harmonization Export (${formatName})\n# Sector: Ward 14, Pune Urban\n# Total Parcels: 1420\n# Coordinate System: EPSG:4326 WGS84\n`], { type: 'text/plain' });
+    const dummyBlob = new Blob([`# Project A.L.I.G.N. Cadastral Harmonization Export (${formatName})\n# Sector: ${sectorInfo?.name || districtName}\n# Total Parcels: ${parcels.length}\n# Coordinate System: EPSG:4326 WGS84\n`], { type: 'text/plain' });
     const url = URL.createObjectURL(dummyBlob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Project_ALIGN_Cadastre_Ward14_${formatName.toLowerCase()}.${formatName === 'GeoPackage' ? 'gpkg' : 'zip'}`;
+    a.download = `Project_ALIGN_Cadastre_${districtName}_${formatName.toLowerCase()}.${formatName === 'GeoPackage' ? 'gpkg' : 'zip'}`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -88,16 +89,18 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, se
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 select-none animate-in fade-in duration-200">
-      <div className="bg-surface border border-surface-border rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
-        <div className="p-4 border-b border-surface-border flex items-center justify-between bg-surface-raised">
-          <div className="flex items-center space-x-2">
-            <Download className="w-5 h-5 text-cyan-400" />
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 select-none animate-in fade-in duration-200">
+      <div className="bg-slate-900 border border-slate-700/70 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+        <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+          <div className="flex items-center space-x-2.5">
+            <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+              <Download className="w-5 h-5" />
+            </div>
             <h3 className="font-outfit text-sm font-bold text-white">
               Standardized Cadastral Spatial Export
             </h3>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-white">
+          <button onClick={onClose} className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -108,7 +111,7 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, se
           </p>
 
           {downloadSuccess && (
-            <div className="p-2.5 rounded-lg bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs flex items-center space-x-2 animate-in fade-in">
+            <div className="p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-300 text-xs flex items-center space-x-2 animate-in fade-in">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>{downloadSuccess}</span>
             </div>
@@ -118,10 +121,10 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, se
             {/* GeoJSON */}
             <button
               onClick={handleExportGeoJson}
-              className="w-full flex items-center justify-between p-3 rounded-xl bg-surface-raised hover:bg-slate-800 border border-surface-border transition-all text-left group"
+              className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 border border-slate-700/60 hover:border-emerald-500/30 transition-all text-left group"
             >
               <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:scale-105 transition-transform">
+                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 group-hover:scale-105 transition-transform">
                   <FileCode className="w-5 h-5" />
                 </div>
                 <div>
@@ -135,10 +138,10 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, se
             {/* OGC GeoPackage */}
             <button
               onClick={() => handleSimulateSpatialExport('GeoPackage')}
-              className="w-full flex items-center justify-between p-3 rounded-xl bg-surface-raised hover:bg-slate-800 border border-surface-border transition-all text-left group"
+              className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/30 transition-all text-left group"
             >
               <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 group-hover:scale-105 transition-transform">
+                <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 group-hover:scale-105 transition-transform">
                   <Database className="w-5 h-5" />
                 </div>
                 <div>
@@ -146,16 +149,16 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, se
                   <div className="text-[10px] text-slate-400">Standard SQLite container for QGIS, ArcGIS & PostGIS</div>
                 </div>
               </div>
-              <Download className="w-4 h-4 text-slate-400 group-hover:text-cyan-400" />
+              <Download className="w-4 h-4 text-slate-400 group-hover:text-indigo-400" />
             </button>
 
             {/* ESRI Shapefile */}
             <button
               onClick={() => handleSimulateSpatialExport('Shapefile')}
-              className="w-full flex items-center justify-between p-3 rounded-xl bg-surface-raised hover:bg-slate-800 border border-surface-border transition-all text-left group"
+              className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 border border-slate-700/60 hover:border-blue-500/30 transition-all text-left group"
             >
               <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400 group-hover:scale-105 transition-transform">
+                <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 group-hover:scale-105 transition-transform">
                   <Layers className="w-5 h-5" />
                 </div>
                 <div>
@@ -169,10 +172,10 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, se
             {/* Master CSV Register */}
             <button
               onClick={handleExportCsv}
-              className="w-full flex items-center justify-between p-3 rounded-xl bg-surface-raised hover:bg-slate-800 border border-surface-border transition-all text-left group"
+              className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-800/40 hover:bg-slate-800 border border-slate-700/60 hover:border-amber-500/30 transition-all text-left group"
             >
               <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-amber-500/10 text-amber-400 group-hover:scale-105 transition-transform">
+                <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 group-hover:scale-105 transition-transform">
                   <FileSpreadsheet className="w-5 h-5" />
                 </div>
                 <div>
@@ -187,7 +190,7 @@ export default function ExportDropdown({ isOpen, onClose, parcels, conflicts, se
           <div className="pt-2 flex justify-end">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-surface-raised hover:bg-slate-700 text-slate-300 text-xs font-medium"
+              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-all"
             >
               Done
             </button>

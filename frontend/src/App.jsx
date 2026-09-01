@@ -242,8 +242,8 @@ export default function App() {
 
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-14 left-1/2 -translate-x-1/2 z-50 gis-glass px-4 py-2 rounded-xl border border-cyan-500/50 text-cyan-300 text-xs font-mono font-bold shadow-2xl animate-in fade-in slide-in-from-bottom duration-200 flex items-center space-x-2">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+        <div className="fixed bottom-14 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 backdrop-blur-md px-4 py-2 rounded-xl border border-indigo-500/40 text-emerald-300 text-xs font-mono font-bold shadow-2xl animate-in fade-in slide-in-from-bottom duration-200 flex items-center space-x-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span>{toastMessage}</span>
         </div>
       )}
@@ -272,6 +272,7 @@ export default function App() {
       <EncroachmentNoticeModal
         isOpen={!!noticeModalConflict}
         conflict={noticeModalConflict}
+        sectorInfo={data.sectorInfo}
         onClose={() => setNoticeModalConflict(null)}
       />
 

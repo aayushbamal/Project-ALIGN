@@ -191,12 +191,28 @@ export async function generateBhuAadhaarPDF(parcel) {
 /**
  * Generates an official Municipal Encroachment Legal Notice (Section 248 MLRC) (PDF)
  */
-export async function generateEncroachmentNoticePDF(conflict) {
+export async function generateEncroachmentNoticePDF(conflict, sectorInfo) {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
     format: 'a4'
   });
+
+  const districtName = sectorInfo?.district?.toUpperCase() || 'PUNE';
+  const locationName = conflict.location || (sectorInfo ? `${sectorInfo.name} (${sectorInfo.taluk || sectorInfo.district} Taluk)` : 'Ward 14, Pune Urban Sector (Haveli Taluk)');
+  const noticeId = conflict.id || (conflict.parcel_id ? `ENC-${String(conflict.parcel_id).replace(/[^0-9]/g, '').slice(-3).padStart(3, '0')}` : '001');
+  const ownerName = conflict.owner_name || conflict.owner_en || 'Sanjay N. Jadhav';
+  const ownerVernacular = conflict.owner_vernacular || '';
+  const ulpin = conflict.ulpin || 'IN-MH-27-014-98214';
+  const khasraNo = conflict.khasra_no || '170/7';
+  const discrepancy = conflict.discrepancy_type || conflict.encroachment_type || 'Stormwater Drainage Canal Encroachment';
+  const variance = conflict.variance_sqm || `+${conflict.encroached_area_sqm || 42.5} sq.m`;
+  const confidenceScore = conflict.confidence !== undefined 
+    ? (String(conflict.confidence).includes('%') ? conflict.confidence : `${conflict.confidence}%`)
+    : (conflict.confidence_score !== undefined ? `${conflict.confidence_score}%` : '54.5%');
+
+  const lat = conflict.centroid?.[1] ? conflict.centroid[1].toFixed(6) : (conflict.centroid?.[0] ? conflict.centroid[0].toFixed(6) : '18.520294');
+  const lon = conflict.centroid?.[0] ? conflict.centroid[0].toFixed(6) : (conflict.centroid?.[1] ? conflict.centroid[1].toFixed(6) : '73.857345');
 
   // Clean government header
   doc.setFillColor(248, 250, 252);
@@ -213,7 +229,7 @@ export async function generateEncroachmentNoticePDF(conflict) {
 
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  doc.text('DEPT. OF TOWN PLANNING & LAND REVENUE | PUNE DISTRICT', 105, 28, { align: 'center' });
+  doc.text(`DEPT. OF TOWN PLANNING & LAND REVENUE | ${districtName} DISTRICT`, 105, 28, { align: 'center' });
   doc.text('URBAN SPATIAL MONITORING & AUDIT CELL (PROJECT A.L.I.G.N.)', 105, 33, { align: 'center' });
 
   doc.setLineWidth(0.5);
@@ -223,7 +239,7 @@ export async function generateEncroachmentNoticePDF(conflict) {
   // Notice Reference & Date
   const todayStr = new Date().toISOString().split('T')[0];
   doc.setFontSize(9);
-  doc.text(`Notice Ref No: PMC/REV/ENC/2026/${conflict.id}`, 15, 45);
+  doc.text(`Notice Ref No: ${districtName.slice(0, 3)}/REV/ENC/2026/${noticeId}`, 15, 45);
   doc.text(`Date of Issue: ${todayStr}`, 150, 45);
 
   // Subject Box
@@ -242,10 +258,10 @@ export async function generateEncroachmentNoticePDF(conflict) {
   doc.setFont('helvetica', 'bold');
   doc.text('TO:', 15, 74);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Name of Landowner: ${conflict.owner_name} (${conflict.owner_vernacular})`, 25, 80);
-  doc.text(`Bhu-Aadhaar (ULPIN): ${conflict.ulpin}`, 25, 86);
-  doc.text(`Khasra / Survey No: ${conflict.khasra_no}`, 25, 92);
-  doc.text(`Location: Ward 14, Pune Urban Sector (Haveli Taluk)`, 25, 98);
+  doc.text(`Name of Landowner: ${ownerName} ${ownerVernacular ? `(${ownerVernacular})` : ''}`, 25, 80);
+  doc.text(`Bhu-Aadhaar (ULPIN): ${ulpin}`, 25, 86);
+  doc.text(`Khasra / Survey No: ${khasraNo}`, 25, 92);
+  doc.text(`Location: ${locationName}`, 25, 98);
 
   // Notice Body
   doc.setFontSize(9.5);
@@ -254,10 +270,10 @@ export async function generateEncroachmentNoticePDF(conflict) {
     'automated topological conflation conducted by Project A.L.I.G.N. have detected an unauthorized physical',
     `encroachment extending beyond your legally registered title boundaries into designated municipal infrastructure.`,
     '',
-    `1. NATURE OF VIOLATION: ${conflict.discrepancy_type}`,
-    `2. MEASURED ENCROACHMENT AREA: ${conflict.variance_sqm} (${conflict.encroached_area_sqm} sq. meters)`,
-    `3. SPATIAL CENTROID COORDINATES: ${conflict.centroid[1].toFixed(6)}° N, ${conflict.centroid[0].toFixed(6)}° E`,
-    `4. AI CONFIDENCE & VERIFICATION SCORE: ${conflict.confidence}`,
+    `1. NATURE OF VIOLATION: ${discrepancy}`,
+    `2. MEASURED ENCROACHMENT AREA: ${variance}`,
+    `3. SPATIAL CENTROID COORDINATES: ${lat}° N, ${lon}° E`,
+    `4. AI CONFIDENCE & VERIFICATION SCORE: ${confidenceScore}`,
     '',
     'You are hereby directed to show cause within 15 (FIFTEEN) DAYS of the receipt of this notice as to why the',
     'aforesaid unauthorized compound wall/structure should not be removed and restored to municipal custody.',
@@ -286,11 +302,12 @@ export async function generateEncroachmentNoticePDF(conflict) {
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
   doc.text('TOWN PLANNING ENFORCEMENT OFFICER', 140, 245, { align: 'center' });
-  doc.text('PUNE MUNICIPAL CORPORATION', 140, 250, { align: 'center' });
+  doc.text(`${districtName} MUNICIPAL CORPORATION`, 140, 250, { align: 'center' });
   doc.setTextColor(225, 29, 72);
   doc.setFontSize(8);
   doc.text('[ ELECTRONICALLY ISSUED NOTICE ]', 140, 256, { align: 'center' });
 
   // Save
-  doc.save(`Encroachment_Notice_${conflict.parcel_id.replace('/', '_')}.pdf`);
+  const fileId = conflict.parcel_id ? conflict.parcel_id.replace('/', '_') : noticeId;
+  doc.save(`Encroachment_Notice_${fileId}.pdf`);
 }

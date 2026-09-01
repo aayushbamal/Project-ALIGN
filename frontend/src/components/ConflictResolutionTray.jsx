@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   AlertTriangle, ChevronUp, ChevronDown, Search, Filter, 
-  Download, CheckCircle2, FileText, ExternalLink, ShieldAlert
+  Download, CheckCircle2, FileText
 } from 'lucide-react';
 import { generateEncroachmentNoticePDF } from '../utils/pdf-generator';
 
@@ -40,7 +40,7 @@ export default function ConflictResolutionTray({
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Municipal_Encroachment_Audit_Dossier_Ward14.csv`);
+    link.setAttribute("download", `Municipal_Encroachment_Audit_Dossier.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -72,10 +72,10 @@ export default function ConflictResolutionTray({
                 e.stopPropagation();
                 handleExportCsv();
               }}
-              className="flex items-center space-x-1 text-[11px] font-medium text-slate-300 hover:text-white px-2 py-0.5 rounded bg-surface hover:bg-slate-700 border border-surface-border transition-colors"
+              className="flex items-center space-x-1 text-[11px] font-semibold text-slate-300 hover:text-white px-2.5 py-1 rounded-lg bg-surface hover:bg-slate-800 border border-surface-border transition-all"
               title="Download CSV Dossier"
             >
-              <Download className="w-3 h-3 text-cyan-400" />
+              <Download className="w-3 h-3 text-indigo-400" />
               <span>Export CSV Dossier</span>
             </button>
           )}
@@ -98,7 +98,7 @@ export default function ConflictResolutionTray({
                   placeholder="Search by owner, ULPIN, or Khasra..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full bg-surface border border-surface-border rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                  className="w-full bg-surface border border-surface-border rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                 />
               </div>
             </div>
@@ -108,7 +108,7 @@ export default function ConflictResolutionTray({
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
-                className="bg-surface border border-surface-border rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-500 cursor-pointer"
+                className="bg-surface border border-surface-border rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
               >
                 <option value="all">All Violations ({conflicts.length})</option>
                 <option value="drainage">Stormwater Drainage Canals</option>
@@ -118,7 +118,7 @@ export default function ConflictResolutionTray({
           </div>
 
           {/* Table */}
-          <div className="flex-1 overflow-y-auto rounded-lg border border-surface-border bg-surface/50">
+          <div className="flex-1 overflow-y-auto rounded-xl border border-surface-border bg-surface/50">
             <table className="w-full text-left text-xs">
               <thead className="bg-surface-raised text-[10px] uppercase font-mono text-slate-400 sticky top-0 border-b border-surface-border">
                 <tr>
@@ -158,16 +158,16 @@ export default function ConflictResolutionTray({
                     <td className="py-2 px-3 font-mono font-bold text-rose-400">
                       {c.variance_sqm}
                     </td>
-                    <td className="py-2 px-3 font-mono text-cyan-400">
+                    <td className="py-2 px-3 font-mono text-emerald-400 font-bold">
                       {c.confidence}
                     </td>
                     <td className="py-2 px-3 text-right space-x-1.5">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          generateEncroachmentNoticePDF(c);
+                          onOpenNoticeModal(c);
                         }}
-                        className="px-2 py-1 rounded bg-rose-950/70 hover:bg-rose-900 border border-rose-500/50 text-rose-200 text-[10px] font-bold transition-all"
+                        className="px-2.5 py-1 rounded-lg bg-rose-950/70 hover:bg-rose-900 border border-rose-500/50 text-rose-200 text-[10px] font-bold transition-all active:scale-95"
                         title="Download Section 248 Legal Notice PDF"
                       >
                         Notice
@@ -177,7 +177,7 @@ export default function ConflictResolutionTray({
                           e.stopPropagation();
                           onApproveConflict(c.parcel_id);
                         }}
-                        className="px-2 py-1 rounded bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/50 text-emerald-300 text-[10px] font-medium transition-all"
+                        className="px-2.5 py-1 rounded-lg bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/50 text-emerald-300 text-[10px] font-medium transition-all active:scale-95"
                         title="Approve / Dismiss Conflict"
                       >
                         Approve

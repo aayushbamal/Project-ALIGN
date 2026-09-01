@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Layers, Eye, EyeOff, Sliders, Box, Map as MapIcon, 
-  Filter, Sparkles, CheckCircle2, AlertTriangle, AlertCircle, ShieldAlert, Settings2
+  Filter, CheckCircle2, AlertTriangle, Settings2
 } from 'lucide-react';
 
 export default function LayerTreeSidebar({
@@ -14,8 +14,6 @@ export default function LayerTreeSidebar({
   statusFilter,
   onChangeStatusFilter,
   statusCounts,
-  onTriggerHarmonize,
-  isHarmonizing,
   geoAiParams,
   onChangeGeoAiParam
 }) {
@@ -26,11 +24,11 @@ export default function LayerTreeSidebar({
     <aside className={`h-full bg-surface/95 border-r border-surface-border flex flex-col transition-all duration-300 z-20 select-none ${
       isCollapsed ? 'w-14' : 'w-80'
     }`}>
-      {/* Sidebar Header & 2D/3D Mode Selector */}
+      {/* Sidebar Header */}
       <div className="p-3.5 border-b border-surface-border flex items-center justify-between">
         {!isCollapsed && (
           <div className="flex items-center space-x-2">
-            <Layers className="w-4 h-4 text-cyan-400" />
+            <Layers className="w-4 h-4 text-indigo-400" />
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-200">GIS Layers & Filters</h2>
           </div>
         )}
@@ -50,12 +48,12 @@ export default function LayerTreeSidebar({
             <label className="text-[10px] font-mono uppercase text-slate-400 font-semibold mb-1.5 block">
               Projection Engine
             </label>
-            <div className="grid grid-cols-2 gap-1.5 p-1 bg-surface-raised rounded-lg border border-surface-border">
+            <div className="grid grid-cols-2 gap-1.5 p-1 bg-surface-raised rounded-xl border border-surface-border">
               <button
                 onClick={() => onChangeViewMode('2d')}
-                className={`flex items-center justify-center space-x-1.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+                className={`flex items-center justify-center space-x-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   viewMode === '2d'
-                    ? 'bg-cyan-600 text-white shadow-md'
+                    ? 'bg-indigo-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -65,9 +63,9 @@ export default function LayerTreeSidebar({
 
               <button
                 onClick={() => onChangeViewMode('3d')}
-                className={`flex items-center justify-center space-x-1.5 py-1.5 rounded-md text-xs font-medium transition-all ${
+                className={`flex items-center justify-center space-x-1.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                   viewMode === '3d'
-                    ? 'bg-cyan-600 text-white shadow-md'
+                    ? 'bg-indigo-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -81,7 +79,7 @@ export default function LayerTreeSidebar({
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="text-[10px] font-mono uppercase text-slate-400 font-semibold flex items-center space-x-1">
-                <Filter className="w-3 h-3 text-cyan-400" />
+                <Filter className="w-3 h-3 text-indigo-400" />
                 <span>Filter by Cadastral Status</span>
               </label>
             </div>
@@ -91,7 +89,7 @@ export default function LayerTreeSidebar({
                 onClick={() => onChangeStatusFilter('all')}
                 className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between border transition-all ${
                   statusFilter === 'all'
-                    ? 'bg-surface-raised text-white border-cyan-500/50 shadow-sm'
+                    ? 'bg-surface-raised text-white border-indigo-500/50 shadow-sm'
                     : 'bg-surface/50 text-slate-400 border-surface-border hover:border-slate-600'
                 }`}
               >
@@ -154,25 +152,25 @@ export default function LayerTreeSidebar({
             
             <div className="space-y-2">
               {/* Layer 1: Legacy Cadastre (Shajra Blue) */}
-              <div className="gis-glass-card rounded-lg p-2.5 border border-surface-border">
+              <div className="gis-glass-card rounded-xl p-2.5 border border-surface-border">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-2.5">
-                    <span className="w-3 h-3 rounded-full bg-blue-500 shadow-sm shadow-blue-500/50"></span>
+                    <span className="w-3 h-3 rounded-full bg-blue-500 shadow-sm shadow-blue-500/30"></span>
                     <div>
-                      <div className="text-xs font-medium text-blue-300">Legacy Cadastre (Shajra)</div>
+                      <div className="text-xs font-semibold text-blue-300">Legacy Cadastre (Shajra)</div>
                       <div className="text-[10px] text-slate-400">Distorted Paper/Cloth Vector</div>
                     </div>
                   </div>
                   <button
                     onClick={() => onToggleLayer('legacy')}
-                    className="text-slate-400 hover:text-white"
+                    className="text-slate-400 hover:text-white transition-colors"
                   >
                     {layerVisibility.legacy ? <Eye className="w-4 h-4 text-blue-400" /> : <EyeOff className="w-4 h-4" />}
                   </button>
                 </div>
 
                 {layerVisibility.legacy && (
-                  <div className="flex items-center space-x-2 pt-1 border-t border-surface-border/50">
+                  <div className="flex items-center space-x-2 pt-1.5 border-t border-surface-border/50">
                     <span className="text-[10px] font-mono text-slate-400">Alpha</span>
                     <input
                       type="range"
@@ -190,26 +188,26 @@ export default function LayerTreeSidebar({
                 )}
               </div>
 
-              {/* Layer 3: AI SAM-2 Segmented Walls (Snapped Green) */}
-              <div className="gis-glass-card rounded-lg p-2.5 border border-surface-border">
+              {/* Layer 2: AI SAM-2 Segmented Walls (Snapped Green) */}
+              <div className="gis-glass-card rounded-xl p-2.5 border border-surface-border">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-2.5">
-                    <span className="w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-500/50"></span>
+                    <span className="w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-500/30"></span>
                     <div>
-                      <div className="text-xs font-medium text-emerald-300">AI SAM-2 Walls</div>
+                      <div className="text-xs font-semibold text-emerald-300">AI SAM-2 Walls</div>
                       <div className="text-[10px] text-slate-400">Snapped Foundation Footprints</div>
                     </div>
                   </div>
                   <button
                     onClick={() => onToggleLayer('aiWalls')}
-                    className="text-slate-400 hover:text-white"
+                    className="text-slate-400 hover:text-white transition-colors"
                   >
                     {layerVisibility.aiWalls ? <Eye className="w-4 h-4 text-emerald-400" /> : <EyeOff className="w-4 h-4" />}
                   </button>
                 </div>
 
                 {layerVisibility.aiWalls && (
-                  <div className="flex items-center space-x-2 pt-1 border-t border-surface-border/50">
+                  <div className="flex items-center space-x-2 pt-1.5 border-t border-surface-border/50">
                     <span className="text-[10px] font-mono text-slate-400">Alpha</span>
                     <input
                       type="range"
@@ -227,35 +225,35 @@ export default function LayerTreeSidebar({
                 )}
               </div>
 
-              {/* Layer 4: Drainage Canal */}
-              <div className="gis-glass-card rounded-lg p-2.5 flex items-center justify-between border border-surface-border">
+              {/* Layer 3: Drainage Canal */}
+              <div className="gis-glass-card rounded-xl p-2.5 flex items-center justify-between border border-surface-border">
                 <div className="flex items-center space-x-2.5">
-                  <span className="w-3 h-3 rounded-full bg-cyan-400 shadow-sm shadow-cyan-400/50"></span>
+                  <span className="w-3 h-3 rounded-full bg-teal-400 shadow-sm shadow-teal-400/30"></span>
                   <div>
-                    <div className="text-xs font-medium text-cyan-300">Stormwater Drainage</div>
+                    <div className="text-xs font-semibold text-teal-300">Stormwater Drainage</div>
                     <div className="text-[10px] text-slate-400">3m Municipal Buffer</div>
                   </div>
                 </div>
                 <button
                   onClick={() => onToggleLayer('drainage')}
-                  className="text-slate-400 hover:text-white"
+                  className="text-slate-400 hover:text-white transition-colors"
                 >
-                  {layerVisibility.drainage ? <Eye className="w-4 h-4 text-cyan-400" /> : <EyeOff className="w-4 h-4" />}
+                  {layerVisibility.drainage ? <Eye className="w-4 h-4 text-teal-400" /> : <EyeOff className="w-4 h-4" />}
                 </button>
               </div>
 
-              {/* Layer 5: Road Right-of-Way */}
-              <div className="gis-glass-card rounded-lg p-2.5 flex items-center justify-between border border-surface-border">
+              {/* Layer 4: Road Right-of-Way */}
+              <div className="gis-glass-card rounded-xl p-2.5 flex items-center justify-between border border-surface-border">
                 <div className="flex items-center space-x-2.5">
-                  <span className="w-3 h-3 rounded-full bg-amber-400 shadow-sm shadow-amber-400/50"></span>
+                  <span className="w-3 h-3 rounded-full bg-amber-400 shadow-sm shadow-amber-400/30"></span>
                   <div>
-                    <div className="text-xs font-medium text-amber-300">14m Road Right-of-Way</div>
+                    <div className="text-xs font-semibold text-amber-300">14m Road Right-of-Way</div>
                     <div className="text-[10px] text-slate-400">Public Corridor Bounds</div>
                   </div>
                 </div>
                 <button
                   onClick={() => onToggleLayer('roadRow')}
-                  className="text-slate-400 hover:text-white"
+                  className="text-slate-400 hover:text-white transition-colors"
                 >
                   {layerVisibility.roadRow ? <Eye className="w-4 h-4 text-amber-400" /> : <EyeOff className="w-4 h-4" />}
                 </button>
@@ -267,21 +265,21 @@ export default function LayerTreeSidebar({
           <div className="border-t border-surface-border pt-3">
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="w-full flex items-center justify-between text-[11px] font-mono font-medium text-slate-400 hover:text-slate-200 mb-2"
+              className="w-full flex items-center justify-between text-[11px] font-mono font-semibold text-slate-400 hover:text-slate-200 mb-2 transition-colors"
             >
               <span className="flex items-center space-x-1.5">
-                <Settings2 className="w-3.5 h-3.5 text-cyan-400" />
+                <Settings2 className="w-3.5 h-3.5 text-indigo-400" />
                 <span>GeoAI Conflation Tuning</span>
               </span>
               <span>{showSettings ? '▲' : '▼'}</span>
             </button>
 
             {showSettings && (
-              <div className="gis-glass-card rounded-lg p-3 space-y-3 border border-surface-border">
+              <div className="gis-glass-card rounded-xl p-3 space-y-3 border border-surface-border">
                 <div>
                   <div className="flex justify-between text-[10px] font-mono text-slate-400 mb-1">
                     <span>Vertex Snapping (ε)</span>
-                    <span className="text-cyan-400">{geoAiParams.snapToleranceCm} cm</span>
+                    <span className="text-indigo-400 font-semibold">{geoAiParams.snapToleranceCm} cm</span>
                   </div>
                   <input
                     type="range"
@@ -297,7 +295,7 @@ export default function LayerTreeSidebar({
                 <div>
                   <div className="flex justify-between text-[10px] font-mono text-slate-400 mb-1">
                     <span>Min Sliver Area</span>
-                    <span className="text-cyan-400">{geoAiParams.minSliverAreaSqm} m²</span>
+                    <span className="text-indigo-400 font-semibold">{geoAiParams.minSliverAreaSqm} m²</span>
                   </div>
                   <input
                     type="range"
@@ -313,7 +311,7 @@ export default function LayerTreeSidebar({
                 <div>
                   <div className="flex justify-between text-[10px] font-mono text-slate-400 mb-1">
                     <span>nDSM Eave Contraction</span>
-                    <span className="text-cyan-400">{geoAiParams.eaveBufferM} m</span>
+                    <span className="text-indigo-400 font-semibold">{geoAiParams.eaveBufferM} m</span>
                   </div>
                   <input
                     type="range"
@@ -332,12 +330,12 @@ export default function LayerTreeSidebar({
       ) : (
         /* Collapsed Icon Bar */
         <div className="p-2 space-y-3 flex flex-col items-center">
-          <button onClick={() => setIsCollapsed(false)} className="p-2 rounded-lg bg-surface-raised text-cyan-400" title="Expand">
+          <button onClick={() => setIsCollapsed(false)} className="p-2 rounded-lg bg-surface-raised text-indigo-400" title="Expand">
             <Layers className="w-4 h-4" />
           </button>
           <div className="w-2 h-2 rounded-full bg-emerald-400" title="AI Walls"></div>
           <div className="w-2 h-2 rounded-full bg-blue-400" title="Legacy Cadastre"></div>
-          <div className="w-2 h-2 rounded-full bg-cyan-400" title="Drainage"></div>
+          <div className="w-2 h-2 rounded-full bg-teal-400" title="Drainage"></div>
           <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" title="Encroachments"></div>
         </div>
       )}

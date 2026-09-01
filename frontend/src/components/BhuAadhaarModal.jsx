@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { X, Download, QrCode, ShieldCheck, Check, Building } from 'lucide-react';
+import { X, Download, QrCode, ShieldCheck } from 'lucide-react';
 import QRCode from 'qrcode';
 import { generateBhuAadhaarPDF } from '../utils/pdf-generator';
 
@@ -30,24 +30,26 @@ export default function BhuAadhaarModal({ isOpen, onClose, parcel }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 select-none animate-in fade-in duration-200">
-      <div className="bg-surface border border-surface-border rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 select-none animate-in fade-in duration-200">
+      <div className="bg-slate-900 border border-slate-700/60 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl">
         {/* Modal Header */}
-        <div className="p-4 border-b border-surface-border flex items-center justify-between bg-surface-raised">
-          <div className="flex items-center space-x-2">
-            <QrCode className="w-5 h-5 text-cyan-400" />
+        <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+          <div className="flex items-center space-x-2.5">
+            <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+              <QrCode className="w-5 h-5" />
+            </div>
             <h3 className="font-outfit text-sm font-bold text-white">
               Official Bhu-Aadhaar (ULPIN) Digital Property Card
             </h3>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-white">
+          <button onClick={onClose} className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Card Content */}
         <div className="p-6">
-          <div className="bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border-2 border-emerald-500/50 rounded-xl p-5 relative overflow-hidden shadow-2xl">
+          <div className="bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 border border-emerald-500/30 rounded-xl p-5 relative overflow-hidden shadow-2xl">
             {/* National Tricolor Top Strip */}
             <div className="absolute top-0 left-0 right-0 h-1.5 flex">
               <div className="w-1/3 bg-[#FF9933]"></div>
@@ -67,9 +69,9 @@ export default function BhuAadhaarModal({ isOpen, onClose, parcel }) {
             {/* ULPIN & QR Section */}
             <div className="grid grid-cols-3 gap-4 my-4 items-center">
               <div className="col-span-2 space-y-2">
-                <div className="p-2.5 rounded-lg bg-surface border border-cyan-500/30">
+                <div className="p-2.5 rounded-xl bg-slate-900 border border-indigo-500/30">
                   <div className="text-[9px] font-mono uppercase text-slate-400">Unique Land Parcel Identifier (ULPIN)</div>
-                  <div className="text-sm font-mono font-bold text-cyan-300 tracking-wider mt-0.5">
+                  <div className="text-sm font-mono font-bold text-white tracking-wider mt-0.5">
                     {parcel.ulpin}
                   </div>
                 </div>
@@ -91,7 +93,7 @@ export default function BhuAadhaarModal({ isOpen, onClose, parcel }) {
               </div>
 
               {/* Scannable QR Code */}
-              <div className="flex flex-col items-center justify-center p-2 rounded-lg bg-white shadow-md">
+              <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-white shadow-md">
                 {qrUrl ? (
                   <img src={qrUrl} alt="Bhu-Aadhaar QR Code" className="w-24 h-24 block" />
                 ) : (
@@ -102,7 +104,7 @@ export default function BhuAadhaarModal({ isOpen, onClose, parcel }) {
             </div>
 
             {/* Survey Details & Coordinates */}
-            <div className="grid grid-cols-3 gap-2 p-2.5 rounded-lg bg-surface-raised border border-surface-border text-center text-[10px] font-mono">
+            <div className="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-slate-800/40 border border-slate-700/50 text-center text-[10px] font-mono">
               <div>
                 <div className="text-slate-400">Legal Area</div>
                 <div className="text-slate-200 font-bold">{parcel.legal_area_sqm} m²</div>
@@ -113,7 +115,7 @@ export default function BhuAadhaarModal({ isOpen, onClose, parcel }) {
               </div>
               <div>
                 <div className="text-slate-400">AI Confidence</div>
-                <div className="text-cyan-400 font-bold">{parcel.confidence_score}%</div>
+                <div className="text-emerald-400 font-bold">{parcel.confidence_score}%</div>
               </div>
             </div>
 
@@ -123,7 +125,7 @@ export default function BhuAadhaarModal({ isOpen, onClose, parcel }) {
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span className="font-bold">Digitally Sealed & Cryptographically Signed</span>
               </div>
-              <span>Ward 14, Pune Urban</span>
+              <span>DoLR • SVAMITVA Verified</span>
             </div>
           </div>
 
@@ -131,14 +133,14 @@ export default function BhuAadhaarModal({ isOpen, onClose, parcel }) {
           <div className="flex items-center justify-end space-x-3 mt-5">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-surface-raised hover:bg-slate-700 text-slate-300 text-xs font-medium transition-all"
+              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-all"
             >
               Close
             </button>
             <button
               onClick={handleDownload}
               disabled={isGenerating}
-              className="flex items-center space-x-2 px-5 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-500/25 active:scale-95 transition-all"
+              className="flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/25 active:scale-95 transition-all"
             >
               <Download className="w-3.5 h-3.5" />
               <span>{isGenerating ? 'Generating PDF...' : 'Download Official PDF Card'}</span>
