@@ -257,6 +257,8 @@ export default function App() {
         totalParcels={data.parcels.length}
         conflictsCount={data.conflicts.length}
         kpiMetrics={data.kpiMetrics}
+        selectedSector={selectedSector}
+        onSelectSector={handleSelectSector}
       />
 
       {/* 6. Bhu-Aadhaar Digital Card Modal */}
